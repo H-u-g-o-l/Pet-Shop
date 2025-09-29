@@ -1,43 +1,24 @@
 import java.util.ArrayList;
 
-public class Clientes {
-    private int id;
-    private String nome;
+public class Clientes extends Usuarios{
     private ArrayList<Pet> pet;
     private double saldo;   // Opcional, talvez descarte depois  
     
     // Construtor sem saldo
-    public Clientes(int id, String nome, ArrayList<Pet> pet) {
-        this.id = id;
-        this.nome = nome;
+    public Clientes(int id, String nome, String email, ArrayList<Pet> pet) {
+        super(id, nome, email);
         this.pet = pet;
         this.saldo = 0;
     }
 
     // Construtor com tudo
-    public Clientes(int id, String nome, ArrayList<Pet> pet, double saldo) {
-        this.id = id;
-        this.nome = nome;
+    public Clientes(int id, String nome,String email, ArrayList<Pet> pet, double saldo) {
+        super(id, nome, email);
         this.pet = pet;
         this.saldo = saldo;
     }
 
     // Getters e Setters
-    public int getId() {
-        return this.id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return this.nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
 
     public ArrayList<Pet> getPet() {
         return this.pet;
@@ -56,9 +37,9 @@ public class Clientes {
     }
 
     // Alterar a parte dos pets dps
+    @Override
     public String toString(){
-        return "Id cliente: " + this.id +
-            "\nNome: " + this.nome +
+        return super.toString() +
             "\nSaldo: " + this.saldo +
             "\nPet(s): " + this.pet;
     }

@@ -1,16 +1,13 @@
 public class Pet {
     private int idPet;
     private String nomePet;
-    private String raca;
     private String especie;
     private boolean tosar;
 
     // No momento o id pode ser repetido, uma implementação com hash table pode evitar isso ou o uso de um banco de dados.
-
-    public Pet(int idPet, String nomePet, String raca, String especie, boolean tosar) {
+    public Pet(int idPet, String nomePet,String especie, boolean tosar) {
         this.idPet = idPet;
         this.nomePet = nomePet;
-        this.raca = raca;
         this.especie = especie;
         this.tosar = tosar;
     }
@@ -27,10 +24,6 @@ public class Pet {
         return this.nomePet;
     }
 
-    public String getRaca() {
-        return this.raca;
-    }
-
     public String getEspecie() {
         return this.especie;
     }
@@ -39,11 +32,9 @@ public class Pet {
         return this.tosar;
     }
 
-
     public String toString(){
         return "PetId: " + this.idPet + 
             "\nNomePet: " + this.nomePet +
-            "\nRaca: " + this.raca +
             "\nEspecie: " + this.especie;
     }
 }
