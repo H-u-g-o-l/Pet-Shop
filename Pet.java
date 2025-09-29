@@ -1,14 +1,18 @@
 public class Pet {
-    int idPet;
-    String nomePet;
-    String raca;
-    String especie;
+    private int idPet;
+    private String nomePet;
+    private String raca;
+    private String especie;
+    private boolean tosar;
 
-    public Pet(int idPet, String nomePet, String raca, String especie) {
+    // No momento o id pode ser repetido, uma implementação com hash table pode evitar isso ou o uso de um banco de dados.
+
+    public Pet(int idPet, String nomePet, String raca, String especie, boolean tosar) {
         this.idPet = idPet;
         this.nomePet = nomePet;
         this.raca = raca;
         this.especie = especie;
+        this.tosar = tosar;
     }
 
     public int getIdPet() {
@@ -23,26 +27,19 @@ public class Pet {
         return this.nomePet;
     }
 
-    public void setNomePet(String nomePet) {
-        this.nomePet = nomePet;
-    }
-
     public String getRaca() {
         return this.raca;
-    }
-
-    public void setRaca(String raca) {
-        this.raca = raca;
     }
 
     public String getEspecie() {
         return this.especie;
     }
-
-    public void setEspecie(String especie) {
-        this.especie = especie;
-    }
     
+    public boolean getTosar(){
+        return this.tosar;
+    }
+
+
     public String toString(){
         return "PetId: " + this.idPet + 
             "\nNomePet: " + this.nomePet +

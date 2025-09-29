@@ -1,10 +1,10 @@
 import java.util.ArrayList;
 
 public class Clientes {
-    int id;
-    String nome;
-    ArrayList<Pet> pet;
-    double saldo;   // Opcional, talvez descarte depoi  
+    private int id;
+    private String nome;
+    private ArrayList<Pet> pet;
+    private double saldo;   // Opcional, talvez descarte depois  
     
     // Construtor sem saldo
     public Clientes(int id, String nome, ArrayList<Pet> pet) {
