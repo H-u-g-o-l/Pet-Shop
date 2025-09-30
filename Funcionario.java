@@ -1,15 +1,22 @@
 public class Funcionario extends Usuarios{
-    // funcionario tem horario pra trabalhar 
-    // pra facilitar de começo tem apenas a flag "trabalhando"
-    // seria muito foda adicionar um meio de tornar ela true ou false ao depender do horario atual
-    public boolean trabalhando = false;
-    // private String horarioDeTrabalho
 
-
-    public Funcionario(int id, String nome, String email){
-        super(id, nome, email);
+    public Funcionario(String nome, String email){
+        super(nome, email);
     }
 
-    // Add metodos Limpar, tosar e etc..
-    // add get e set pra mudar ou ver os horarios de trabalho
+    // Talvez seja legal retornar string, vou decidir
+    // Printa os pets que estao no banco de dados que precisam de banho/tosa
+    public void checaPetsEmEspera(){
+
+    }
+    // Usa do id exposto na tabela para tornar o atributo tosa em true
+    public tosar(int idPet){
+        
+    }
+
+    // Usa do id exposto na tabela para tornar o atributo banho true
+    public darBanho(int idPet){
+
+    }
+
 }

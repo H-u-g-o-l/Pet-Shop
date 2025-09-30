@@ -1,0 +1,8 @@
+-- CREATE TABLE pets(
+--     id INTEGER PRIMARY KEY,
+--     user_id INTEGER REFERENCES users(id), 
+--     nome TEXT NOT NULL,
+--     raca TEXT NOT NULL,
+--     banho BOOLEAN,
+--     tosa BOOLEAN
+-- );

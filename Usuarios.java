@@ -1,17 +1,10 @@
 public abstract class Usuarios {
-    private int id;
     private String nome;
     private String email;
 
-    public Usuarios(int id, String nome, String email){
-        this.id = id;        
+    public Usuarios(String nome, String email){
         setEmail(email);
         setNome(nome);
-    }
-
-
-    public int getId() {
-        return this.id;
     }
 
     public String getNome() {
@@ -33,8 +26,7 @@ public abstract class Usuarios {
     }
 
     public String toString(){
-        return "Id: " + this.id +
-                "Nome: " + this.nome +
+        return  "Nome: " + this.nome +
                 "Email: " + this.email;
     }
 }
