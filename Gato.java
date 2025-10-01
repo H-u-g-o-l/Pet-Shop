@@ -1,8 +1,8 @@
 public class Gato extends Pet{
     private String raca;
 
-    public Gato(int idPet, String nomePet,String especie, boolean tosar, String raca){
-        super(idPet, nomePet, especie, true);
+    public Gato(String nomePet,String especie, boolean tosar, String raca){
+        super(nomePet, especie, true, true);
         this.raca = raca;
     }
 

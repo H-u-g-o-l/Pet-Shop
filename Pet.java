@@ -1,12 +1,12 @@
 public class Pet {
     private String nomePet;
-    private String especie;
+    private String raca;
     private boolean tosar;
     private boolean banho;
 
-    public Pet(String nomePet,String especie, boolean banho, boolean tosar) {
+    public Pet(String nomePet,String raca, boolean banho, boolean tosar) {
         this.nomePet = nomePet;
-        this.especie = especie;
+        this.raca = raca;
         this.tosar = tosar;
         this.banho = banho;
     }
@@ -15,8 +15,8 @@ public class Pet {
         return this.nomePet;
     }
 
-    public String getEspecie() {
-        return this.especie;
+    public String getRaca() {
+        return this.raca;
     }
     
     // Checar a necessidade de um getter/setter pra tosar e banho
@@ -24,6 +24,6 @@ public class Pet {
     // ALTERAR
     public String toString(){
         return "\nNomePet: " + this.nomePet +
-            "\nEspecie: " + this.especie;
+            "\nRaca: " + this.raca;
     }
 }
