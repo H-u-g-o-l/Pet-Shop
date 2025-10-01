@@ -1,7 +1,8 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.SQLException;
 
 public class Funcionario extends Usuarios{
 
@@ -9,54 +10,52 @@ public class Funcionario extends Usuarios{
         super(nome, email);
     }
 
-    // Talvez seja legal retornar string, vou decidir
-    // Printa os pets que estao no banco de dados que precisam de banho/tosa
+
     public void checaPetsEmEspera(){
         String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
+        // Essa query junta as informações compativeis do id de pets com o id exposto na lista de espera
+        // e junta os dados de clientes com o id dos pets que estao na lista
+        // CUIDADO COM OS NOMES
+            String sql = """
+            SELECT le.id AS entrada_id,
+                c.nome AS nome_dono,
+                p.id AS pet_id,
+                p.nome AS nome_pet,
+                p.raca AS raca_pet,
+                p.banho,
+                p.tosa,
+                le.pedido_feito
+            FROM lista_de_espera le
+            JOIN pets p ON le.pet_id = p.id
+            JOIN clientes c ON p.user_id = c.id
+            ORDER BY le.pedido_feito
+            LIMIT 5;
+            """;
 
-        try(Connection con = DriverManager.getConnection(url)){
-            Statement stmt = con.createStatement();
+        try(Connection con = DriverManager.getConnection(url);           
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
             
-            String listaQuery = "SELECT * FROM lista_de_espera";
-            
-            ResultSet rs = stmt.executeQuery(listaQuery);
-
             while (rs.next()){
-                int id = rs.getInt("id");
-                int petId = rs.getInt("pet_id");
-
-                // Query que retorna o nome, raça, banho e tosa dos pets que precisam de serviço
-                String petQuery = "SELECT user_id, nome, raca, banho, tosa FROM pets WHERE id = " + petId;
-                ResultSet pet = stmt.executeQuery(petQuery);
-
-                if (pet.next()){
-                    int donoId = pet.getInt("user_id");
-                    String nomePet = pet.getString("nome");
-                    String racaPet = pet.getString("raca");
-                    boolean limpo = pet.getBoolean("banho");
-                    boolean tosado = pet.getBoolean("tosa");
-
-                    // fazer uma query que pega o nome da pessoa responsavel pelo pet
-                    // RESULT SET PRECISA DE UM TRY
-                    ResultSet dono = stmt.executeQuery("SELECT nome FROM clientes WHERE id = " + donoId);
-                    String donoNome = dono.getString("nome");
-
-                    System.out.println(
-                    "Id da entrada: " + id +
-                    "\nDono: " + donoNome +
-                    "\nNome do pet: " + nomePet +
-                    "\nRaca: " + racaPet + 
-                    "\nEsta limpo: " + limpo +
-                    "\nEsta tosado: " + tosado +
-                    "\nPedido recebido: " + rs.getDate("pedido_feito")
-                    );
-                }
-                // MUDAR FORMA DE LIDAR COM O ELSE
-                else{
-                    System.out.println("Fim");
-                }
+                int idEntrada = rs.getInt("entrada_id");
+                String nomeDono = rs.getString("nome_dono");
+                String nomePet = rs.getString("nome_pet");
+                String racaPet = rs.getString("raca_pet");
+                boolean banho = rs.getBoolean("banho");
+                boolean tosa = rs.getBoolean("tosa");
+            
+                System.out.println(
+                "Id da entrada: " + idEntrada +
+                "\nDono: " + nomeDono +
+                "\nNome do pet: " + nomePet +
+                "\nRaca: " + racaPet + 
+                "\nEsta limpo: " + banho +
+                "\nEsta tosado: " + tosa +
+                "\nPedido recebido: " + rs.getDate("pedido_feito")
+                );
             }
-        } catch (Exception e){
+        } catch (SQLException e){
+            System.err.println("Erro ao listar pets em espera: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -64,29 +63,35 @@ public class Funcionario extends Usuarios{
     public void tosar(int idLista){
         String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
 
-        try(Connection con = DriverManager.getConnection(url)){
-            Statement stmt = con.createStatement();
+        try(Connection con = DriverManager.getConnection(url);
+            PreparedStatement psPet = con.prepareStatement("SELECT pet_id FROM lista_de_espera WHERE id = ?");
+            PreparedStatement psTosa = con.prepareStatement("SELECT tosa FROM pets WHERE id = ?");
+            PreparedStatement psUpdateTosa = con.prepareStatement("UPDATE pets SET tosa = 1 WHERE id = ?")){
 
-            String queryIdPet = "SELECT pet_id FROM lista_de_espera WHERE id = " + idLista;
-            ResultSet idPet = stmt.executeQuery(queryIdPet);
-            
-            // logica simples de checagem se o valor é true ou false
-            String queryTosa = "SELECT tosa FROM pets WHERE id = " + idPet.getInt("pet_id");
-            ResultSet tosa = stmt.executeQuery(queryTosa);
+            psPet.setInt(1, idLista);
+            try (ResultSet rsPet = psPet.executeQuery()){
+                if (rsPet.next()){
+                    int petId = rsPet.getInt("pet_id");
 
-            if (tosa.getBoolean("tosa")){
-                System.out.println("Pet nao precisa de tosa.");
-                return;
+                    psTosa.setInt(1, petId);    
+                    try (ResultSet rsTosa = psTosa.executeQuery()){
+                        if (rsTosa.next()){
+                            if (rsTosa.getBoolean("tosa")){
+                                System.out.println("Pet nao precisa de tosa.");
+                                return;
+                            }
+
+                            psUpdateTosa.setInt(1, petId);
+                            psUpdateTosa.executeUpdate();
+                            System.out.println("Pet " + petId + " foi tosado!");
+                            
+                            petPronto(con, petId);
+                        }
+                    }
+                }
             }
-            else{
-                // Query que da um update no valor de tosa, tornando entao true
-                String queryTosaTrue = "UPDATE pets SET tosa = 1 WHERE id = " + idPet.getInt("pet_id");
-                stmt.executeUpdate(queryTosaTrue);
-            }
-
-            petPronto(idPet.getInt("pet_id"));
-
-        } catch (Exception e){
+        } catch (SQLException e){
+            System.err.println("Erro ao tosar pet: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -95,56 +100,65 @@ public class Funcionario extends Usuarios{
     public void darBanho(int idLista){
         String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
 
-        try(Connection con = DriverManager.getConnection(url)){
-            Statement stmt = con.createStatement();
+        try(Connection con = DriverManager.getConnection(url);
+            PreparedStatement psPet = con.prepareStatement("SELECT pet_id FROM lista_de_espera WHERE id = ?");
+            PreparedStatement psBanho = con.prepareStatement("SELECT banho FROM pets WHERE id = ?");
+            PreparedStatement psUpdateBanho = con.prepareStatement("UPDATE pets SET banho = 1 WHERE id = ?")){
 
-            String queryIdPet = "SELECT pet_id FROM lista_de_espera WHERE id = " + idLista;
-            ResultSet idPet = stmt.executeQuery(queryIdPet);
-            
-            // logica simples de checagem se o valor é true ou false
-            String queryBanho = "SELECT banho FROM pets WHERE id = " + idPet.getInt("pet_id");
-            ResultSet banho = stmt.executeQuery(queryBanho);
+            psPet.setInt(1, idLista);
+            try (ResultSet rsPet = psPet.executeQuery()){
+                if (rsPet.next()){
+                    int petId = rsPet.getInt("pet_id");
+                    
+                    psBanho.setInt(1, petId);
+                    try (ResultSet rsBanho = psBanho.executeQuery()){
+                        if (rsBanho.next()){
+                            boolean banho = rsBanho.getBoolean("banho");
 
-            if (banho.getBoolean("banho")){
-                System.out.println("Pet nao precisa de banho.");
-                return;
+                            if (banho){
+                                System.out.println("Pet nao precisa de banho.");
+                                return;
+                            }
+                              
+                            psUpdateBanho.setInt(1, petId);
+                            psUpdateBanho.executeUpdate();
+                            System.out.println("Pet " + petId + " tomou banho!");
+
+                            petPronto(con, petId);
+                        }
+                    }
+                }
             }
-            else{
-                // Query que da um update no valor de banho, tornando entao true
-                String queryBanhoTrue = "UPDATE pets SET banho = 1 WHERE id = " + idPet;
-                stmt.executeUpdate(queryBanhoTrue);
-            }
-
-            petPronto(idPet.getInt("pet_id"));
-            
-        } catch (Exception e){
+        } catch (SQLException e){
+            System.err.println("Erro ao dar banho no pet: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    private boolean petPronto(int idPet){
-        String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
+    // Caso de algum erro manda pra o outro metodo a exception
+    private boolean petPronto(Connection con, int idPet) throws SQLException{
+        try(PreparedStatement psLimpeza = con.prepareStatement("SELECT banho, tosa FROM pets WHERE id = ?");
+            PreparedStatement psDeletaPet = con.prepareStatement("DELETE FROM lista_de_espera WHERE pet_id = ?")){  
 
-        // fazer uma query que checa se banho e tosa é true, e retira a instancia do pet da table de lista_de_espera
-        
-        try(Connection con = DriverManager.getConnection(url)){
-            Statement stmt = con.createStatement();
-            String checaLimpeza = "SELECT banho, tosa FROM pets WHERE id = " + idPet;
+            psLimpeza.setInt(1, idPet);
+            try (ResultSet rsLimpo = psLimpeza.executeQuery()){
+                if (rsLimpo.next()){
 
-            ResultSet limpo = stmt.executeQuery(checaLimpeza);
+                    boolean banho = rsLimpo.getBoolean("banho");
+                    boolean tosa = rsLimpo.getBoolean("tosa"); 
 
-            if (limpo.getBoolean("banho") && limpo.getBoolean("tosa")){
-                // query pra retirar o pet da table de lista_de_espera
-                String deletaPet = "DELETE FROM lista_de_espera WHERE pet_id = " + idPet;
-                stmt.executeUpdate(deletaPet);
-
-                return true;
-            }   
-        }catch (Exception e){
-            e.printStackTrace();
+                    if (banho && tosa){
+                        psDeletaPet.setInt(1, idPet);
+                        psDeletaPet.executeUpdate();
+                        System.out.println("Pet com id = "+ idPet + " foi removido da lista de espera.");
+                        return true;
+                    }
+                }
+                else{
+                    System.out.println("Pet com id = " + idPet + " não encontrado.");
+                }
+                return false;
+            }
         }
-        return false;
-
     }
-
 }
