@@ -1,14 +1,10 @@
 public class Pet {
     private String nomePet;
     private String raca;
-    private boolean tosar;
-    private boolean banho;
 
-    public Pet(String nomePet,String raca, boolean banho, boolean tosar) {
+    public Pet(String nomePet,String raca) {
         this.nomePet = nomePet;
         this.raca = raca;
-        this.tosar = tosar;
-        this.banho = banho;
     }
 
     public String getNomePet() {

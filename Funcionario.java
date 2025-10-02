@@ -4,12 +4,33 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/*
+ * Funcionario possui:
+ *  - Nome 
+ *  - Email unico
+ * 
+ *  Metodos:
+ * 
+ *  ESSES METODOS PRECISAM SER CHAMADOS
+ *  checaPetsEmEspera (visualiza os 5 primeiros pets, EM ORDEM DE CHEGADA, que precisam de banho ou tosa)
+ *  tosar (usa do id da lista pra tosar o pet)
+ *  darBanho (usa do id da lista pra dar banho no pet)
+ *  toString
+ * 
+ *  ESSES METODOS SAO ATIVADOS PASSIVAMENTE
+ *  petPronto (se ele estiver nos conformes ele é retirado da lista de espera)
+ *  adicionaPedidoConcluido (armazena toda ação que foi feita, se x pet foi tosado ou banhado em que dia e por quem)
+ * 
+ *  
+ */
+
+
+
 public class Funcionario extends Usuarios{
 
     public Funcionario(String nome, String email){
         super(nome, email);
     }
-
 
     public void checaPetsEmEspera(){
         String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
@@ -86,6 +107,7 @@ public class Funcionario extends Usuarios{
                             System.out.println("Pet " + petId + " foi tosado!");
                             
                             petPronto(con, petId);
+                            adicionaPedidoConcluido(con, petId, false, true);
                         }
                     }
                 }
@@ -125,8 +147,12 @@ public class Funcionario extends Usuarios{
                             System.out.println("Pet " + petId + " tomou banho!");
 
                             petPronto(con, petId);
+                            adicionaPedidoConcluido(con, petId, true, false);
                         }
                     }
+                }
+                else{
+                    System.out.println("Entrada da lista nao encontrada, id: " + idLista);
                 }
             }
         } catch (SQLException e){
@@ -137,7 +163,7 @@ public class Funcionario extends Usuarios{
 
     // Caso de algum erro manda pra o outro metodo a exception
     private boolean petPronto(Connection con, int idPet) throws SQLException{
-        try(PreparedStatement psLimpeza = con.prepareStatement("SELECT banho, tosa FROM pets WHERE id = ?");
+        try (PreparedStatement psLimpeza = con.prepareStatement("SELECT banho, tosa FROM pets WHERE id = ?");
             PreparedStatement psDeletaPet = con.prepareStatement("DELETE FROM lista_de_espera WHERE pet_id = ?")){  
 
             psLimpeza.setInt(1, idPet);
@@ -151,6 +177,7 @@ public class Funcionario extends Usuarios{
                         psDeletaPet.setInt(1, idPet);
                         psDeletaPet.executeUpdate();
                         System.out.println("Pet com id = "+ idPet + " foi removido da lista de espera.");
+
                         return true;
                     }
                 }
@@ -159,6 +186,28 @@ public class Funcionario extends Usuarios{
                 }
                 return false;
             }
+        }
+    }
+
+    // Função que adiciona o funcionario, o pet e o serviço feito no pet na table pedido_concluidos
+    private void adicionaPedidoConcluido(Connection con, int idPet, boolean banho, boolean tosa) throws SQLException{
+        try (PreparedStatement psIdFunc = con.prepareStatement("SELECT id FROM funcionarios WHERE email = ?");
+        PreparedStatement psInsert = con.prepareStatement("INSERT INTO pedidos_concluidos (func_id, pet_id, banho, tosa) VALUES (?,?,?,?)")){
+        
+        psIdFunc.setString(1, this.getEmail());
+        try (ResultSet rsIdFunc = psIdFunc.executeQuery()){
+            if (rsIdFunc.next()){
+
+                psInsert.setInt(1, rsIdFunc.getInt("id"));
+                psInsert.setInt(2, idPet);
+                psInsert.setBoolean(3, banho);
+                psInsert.setBoolean(4, tosa);
+
+                psInsert.executeUpdate();
+            }
+        }
+        } catch (SQLException e){
+            throw e;
         }
     }
 }

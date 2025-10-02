@@ -7,6 +7,27 @@ import java.util.ArrayList;
 
 // java -cp "C:\Users\hgbr1\Programas\Exercises\PetShop\Pet-Shop" MyMainClass
 
+
+/*
+ * Cliente possui: 
+ * -Nome
+ * -Email unico
+ * 
+ * -pet (Pode ter 0 ou varios)
+ * 
+ * Metodos:
+ * 
+ * contrutor private (factory)
+ * criarEPersistir (adiciona o objeto na memoria se e somente se ele ir para o banco de dados)
+ * 
+ * Metodo pra retornar os pets com seus nomes 
+ * adicionaPet (add em memoria e no banco de dados)
+ * marcaBanho (nome alteravel) (vai por o pet "nome" para a lista_de_espera)
+ * marcaTosa (poe o pet para a lista de espera)
+ * marcaBanhoETosa
+ * 
+ * toString
+ */
 public class Cliente extends Usuarios{
     private ArrayList<Pet> pet;
 
@@ -39,11 +60,7 @@ public class Cliente extends Usuarios{
         }
     }
 
-    // Getters e Setters
-    public ArrayList<Pet> getPet() {
-        return this.pet;
-    }
-
+    // eh bom fazer com que ele passe os parametros e inicialize um pet e ai esse pet eh adicionado
     public void adicionaPet(Pet pet) {
         String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
         String inserir = "INSERT INTO pets (user_id, nome, raca, banho, tosa) VALUES (?, ?, ?, ?, ?)";

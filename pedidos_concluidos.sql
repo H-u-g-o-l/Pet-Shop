@@ -1,0 +1,8 @@
+-- CREATE TABLE pedidos_concluidos(
+--     id INTEGER PRIMARY KEY,
+--     func_id INTEGER NOT NULL REFERENCES funcionarios(id),
+--     pet_id INTEGER REFERENCES pets(id),
+--     banho BOOLEAN,
+--     tosa BOOLEAN,
+--     data_conclusao DATETIME DEFAULT CURRENT_TIMESTAMP
+-- );
