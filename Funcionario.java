@@ -25,13 +25,13 @@ import java.sql.SQLException;
 
 
 public class Funcionario extends Usuarios{
+    private static final String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
 
     public Funcionario(String nome, String email){
         super(nome, email);
     }
 
     public void checaPetsEmEspera(){
-        String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
         // Essa query junta as informações compativeis do id de pets com o id exposto na lista de espera
         // e junta os dados de clientes com o id dos pets que estao na lista
         // CUIDADO COM OS NOMES
@@ -80,8 +80,6 @@ public class Funcionario extends Usuarios{
     }
     // Usa do id exposto na tabela para tornar o atributo tosa em true
     public void tosar(int idLista){
-        String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
-
         try(Connection con = DriverManager.getConnection(url);
             PreparedStatement psPet = con.prepareStatement("SELECT pet_id FROM lista_de_espera WHERE id = ?");
             PreparedStatement psTosa = con.prepareStatement("SELECT tosa FROM pets WHERE id = ?");
@@ -118,7 +116,6 @@ public class Funcionario extends Usuarios{
 
     // Usa do id exposto na tabela para tornar o atributo banho true
     public void darBanho(int idLista){
-        String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
 
         try(Connection con = DriverManager.getConnection(url);
             PreparedStatement psPet = con.prepareStatement("SELECT pet_id FROM lista_de_espera WHERE id = ?");

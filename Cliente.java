@@ -29,6 +29,7 @@ import java.util.Scanner;
  * toString
  */
 public class Cliente extends Usuarios{
+    private static final String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
 
     // Para evitar que haja a criação do objeto na memória foi usado do Factory Method
     private Cliente(String nome, String email, boolean persistido){
@@ -37,7 +38,6 @@ public class Cliente extends Usuarios{
 
     // Adiciona o cliente ao db caso o email seja unico
     public static Cliente criarEPersistir(String nome, String email) throws EmailJaCadastrado, SQLException{
-        String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
         String sql = "INSERT INTO clientes (nome, email) VALUES (?, ?)";
 
         try(Connection con = DriverManager.getConnection(url);
@@ -88,7 +88,6 @@ public class Cliente extends Usuarios{
     };
 
     public void adicionarPet(Pet pet) {
-        String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
         String inserir = "INSERT INTO pets (user_id, nome, raca, banho, tosa) VALUES (?, ?, ?, ?, ?)";
         String buscaIdDono = "SELECT id FROM clientes WHERE email = ?";
 
@@ -120,7 +119,6 @@ public class Cliente extends Usuarios{
 
     public void marcaBanho(String nomePet){
         // Eu preciso encontrar o animal baseado no nome e no usuario, eu ja possuo o email do usuario entao com ele eu consigo pegar o id e do id eu busco pet com x nome
-        String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
 
         String buscaCliente = "SELECT id FROM clientes WHERE email = ?";
         String buscaPet = "SELECT id FROM pets WHERE user_id = ? AND nome = ?";
@@ -168,7 +166,6 @@ public class Cliente extends Usuarios{
     }
 
     public void marcaTosa(String nomePet){
-        String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
 
         String buscaCliente = "SELECT id FROM clientes WHERE email = ?";
         String buscaPet = "SELECT id FROM pets WHERE user_id = ? AND nome = ?";
@@ -223,8 +220,6 @@ public class Cliente extends Usuarios{
         //                                          nome e email             \n
         sb.append("Nome do Cliente: ").append(this.getNome()).append(System.lineSeparator());
         sb.append("Email do Cliente: ").append(this.getEmail()).append(System.lineSeparator());
-
-        String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
 
         // JOIN pra evitar duas queries separadas
         //          Selecione nome de pets onde o id em pet "user_id" == "id" <- cliente e email = this.getEmail
