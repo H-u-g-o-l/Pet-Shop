@@ -1,4 +1,3 @@
-
 /* Classe encarregada de:
     - Ver quantos funcionarios tem
     - Quantos pedidos foram feitos e concluidos
@@ -7,6 +6,19 @@
 
 */  
 
-public class Gerente {
+
+
+
+
+public class Gerente{
     
+
+
+
+
+
+
+
+
+
 }

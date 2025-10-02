@@ -1,25 +1,35 @@
 public class Pet {
     private String nomePet;
+    private String especie;
     private String raca;
 
-    public Pet(String nomePet,String raca) {
-        this.nomePet = nomePet;
-        this.raca = raca;
+    public Pet(String nomePet,String especie) {
+        this.nomePet = nomePet.toLowerCase();
+        this.especie = especie.toLowerCase();
+        this.raca = "srd";
+    }
+    public Pet (String nomePet, String especie, String raca){
+        this.nomePet = nomePet.toLowerCase();
+        this.especie = especie.toLowerCase();
+        this.raca = raca.toLowerCase();
     }
 
     public String getNomePet() {
         return this.nomePet;
     }
 
-    public String getRaca() {
-        return this.raca;
+    public String getEspecie() {
+        return this.especie;
     }
     
-    // Checar a necessidade de um getter/setter pra tosar e banho
+    public String getRaca(){
+        return this.raca;
+    }
 
     // ALTERAR
     public String toString(){
         return "\nNomePet: " + this.nomePet +
-            "\nRaca: " + this.raca;
+            "\nEspecie: " + this.especie +
+            "\nRaca: " + this.getRaca();
     }
 }

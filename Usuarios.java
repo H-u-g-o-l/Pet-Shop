@@ -25,8 +25,6 @@ public abstract class Usuarios {
         this.email = email;
     }
 
-    public String toString(){
-        return  "Nome: " + this.nome +
-                "Email: " + this.email;
-    }
+    @Override
+    public abstract String toString();
 }

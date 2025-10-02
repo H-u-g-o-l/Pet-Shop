@@ -1,13 +1,13 @@
 public class Gato extends Pet{
-    private String raca;
 
-    public Gato(String nomePet,String especie, boolean tosar, String raca){
-        super(nomePet, especie);
-        this.raca = raca;
+    public Gato(String nomePet,String especie, String raca){
+        super(nomePet, especie, raca);
     }
 
     @Override
     public String toString(){
-        return super.toString() + "\nRaca: " + this.raca;
+        return "Nome do gato: " + this.getNomePet() +
+                "\nEspecie: " + this.getEspecie() +
+                "\n Raca: " + this.getRaca();
     }
 }

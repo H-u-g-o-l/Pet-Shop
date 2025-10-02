@@ -20,8 +20,6 @@ import java.sql.SQLException;
  *  ESSES METODOS SAO ATIVADOS PASSIVAMENTE
  *  petPronto (se ele estiver nos conformes ele é retirado da lista de espera)
  *  adicionaPedidoConcluido (armazena toda ação que foi feita, se x pet foi tosado ou banhado em que dia e por quem)
- * 
- *  
  */
 
 
@@ -161,7 +159,7 @@ public class Funcionario extends Usuarios{
         }
     }
 
-    // Caso de algum erro manda pra o outro metodo a exception
+    // Caso dê algum erro manda pra o outro metodo a exception
     private boolean petPronto(Connection con, int idPet) throws SQLException{
         try (PreparedStatement psLimpeza = con.prepareStatement("SELECT banho, tosa FROM pets WHERE id = ?");
             PreparedStatement psDeletaPet = con.prepareStatement("DELETE FROM lista_de_espera WHERE pet_id = ?")){  
@@ -210,4 +208,11 @@ public class Funcionario extends Usuarios{
             throw e;
         }
     }
+
+    @Override
+    public String toString(){
+        return "Nome do Funcionario: " + this.getNome() +
+                "\nEmail do Funcionario: " + this.getEmail();
+    }
+
 }

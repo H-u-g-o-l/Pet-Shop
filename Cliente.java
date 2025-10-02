@@ -3,8 +3,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-
+import java.util.InputMismatchException;
+import java.util.Scanner;
 // java -cp "C:\Users\hgbr1\Programas\Exercises\PetShop\Pet-Shop" MyMainClass
 
 
@@ -29,12 +29,10 @@ import java.util.ArrayList;
  * toString
  */
 public class Cliente extends Usuarios{
-    private ArrayList<Pet> pet;
 
     // Para evitar que haja a criação do objeto na memória foi usado do Factory Method
     private Cliente(String nome, String email, boolean persistido){
         super(nome, email);
-        this.pet = new ArrayList<Pet>();
     }
 
     // Adiciona o cliente ao db caso o email seja unico
@@ -60,8 +58,36 @@ public class Cliente extends Usuarios{
         }
     }
 
-    // eh bom fazer com que ele passe os parametros e inicialize um pet e ai esse pet eh adicionado
-    public void adicionaPet(Pet pet) {
+    public void adicionarPet(String nome, String especie, String raca){
+        Scanner sc = new Scanner(System.in);
+        
+        int escolha = -1;
+        System.out.println("Por favor digite: 1 se seu pet for um cachorro\n2 se seu pet for um gato \n3 se seu pet não for nenhum dos 2");
+        while(true){
+            try {
+                escolha = sc.nextInt();
+                break;
+            } catch (InputMismatchException e){
+                System.out.println("Resposta invalida. Tente Novamente.");
+                sc.nextLine();
+            }
+        }
+        sc.close();
+
+        switch(escolha){
+            case 1:
+                adicionarPet(new Cachorro(nome, "Cachorro", raca));
+                break;
+            case 2:
+                adicionarPet(new Gato(nome, "Gato", raca));
+                break;
+            default:
+                adicionarPet(new Pet(nome, especie, raca));
+                break;
+        }
+    };
+
+    public void adicionarPet(Pet pet) {
         String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
         String inserir = "INSERT INTO pets (user_id, nome, raca, banho, tosa) VALUES (?, ?, ?, ?, ?)";
         String buscaIdDono = "SELECT id FROM clientes WHERE email = ?";
@@ -82,7 +108,6 @@ public class Cliente extends Usuarios{
                     psUpdate.setBoolean(5, true);
 
                     psUpdate.executeUpdate();
-                    this.pet.add(pet);
 
                     System.out.println("Pet adicionado com sucesso!");
                 }
@@ -93,11 +118,145 @@ public class Cliente extends Usuarios{
         }
     }
 
+    public void marcaBanho(String nomePet){
+        // Eu preciso encontrar o animal baseado no nome e no usuario, eu ja possuo o email do usuario entao com ele eu consigo pegar o id e do id eu busco pet com x nome
+        String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
 
-    // Alterar a parte dos pets dps
+        String buscaCliente = "SELECT id FROM clientes WHERE email = ?";
+        String buscaPet = "SELECT id FROM pets WHERE user_id = ? AND nome = ?";
+        String updateBanho = "UPDATE pets SET banho = 0 WHERE id = ?";
+        String insertLista = "INSERT INTO lista_de_espera (pet_id) VALUES (?)";
+
+        try (Connection con = DriverManager.getConnection(url);
+            PreparedStatement psCliente = con.prepareStatement(buscaCliente);
+            PreparedStatement psPet = con.prepareStatement(buscaPet);
+            PreparedStatement psUpdate = con.prepareStatement(updateBanho);
+            PreparedStatement psInsert = con.prepareStatement(insertLista)){
+
+            psCliente.setString(1, this.getEmail());
+            try (ResultSet rsCliente = psCliente.executeQuery()){
+                if (rsCliente.next()){
+                    int clienteId = rsCliente.getInt("id");
+
+                    psPet.setInt(1, clienteId);
+                    psPet.setString(2, nomePet);
+                    try (ResultSet rsPet = psPet.executeQuery()){
+                        if (rsPet.next()){
+                            int petId = rsPet.getInt("id");
+
+                            psUpdate.setInt(1, petId);
+                            psUpdate.executeUpdate();
+                            
+                            psInsert.setInt(1, petId);
+                            psInsert.executeUpdate();
+
+                            System.out.println("Banho marcado para o pet " + nomePet);
+                        }
+                        else{
+                            System.out.println("Nao foi encontrado pet associado ao cliente. Tente 'adicionarPet' primeiro");
+                        }
+                    }
+                }
+                else{
+                    System.out.println("Cliente nao encontrado");
+                }
+            }    
+        } catch (SQLException e){
+            System.err.println("Erro ao marcar o banho: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void marcaTosa(String nomePet){
+        String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
+
+        String buscaCliente = "SELECT id FROM clientes WHERE email = ?";
+        String buscaPet = "SELECT id FROM pets WHERE user_id = ? AND nome = ?";
+        String updateTosa = "UPDATE pets SET tosa = 0 WHERE id = ?";
+        String insertLista = "INSERT INTO lista_de_espera (pet_id) VALUES (?)";
+
+        try (Connection con = DriverManager.getConnection(url);
+            PreparedStatement psCliente = con.prepareStatement(buscaCliente);
+            PreparedStatement psPet = con.prepareStatement(buscaPet);
+            PreparedStatement psUpdate = con.prepareStatement(updateTosa);
+            PreparedStatement psInsert = con.prepareStatement(insertLista)){
+
+            psCliente.setString(1, this.getEmail());
+            try (ResultSet rsCliente = psCliente.executeQuery()){
+                if (rsCliente.next()){
+                    int clienteId = rsCliente.getInt("id");
+
+                    psPet.setInt(1, clienteId);
+                    psPet.setString(2, nomePet);
+                    try (ResultSet rsPet = psPet.executeQuery()){
+                        if (rsPet.next()){
+                            int petId = rsPet.getInt("id");
+
+                            psUpdate.setInt(1, petId);
+                            psUpdate.executeUpdate();
+                            
+                            psInsert.setInt(1, petId);
+                            psInsert.executeUpdate();
+
+                            System.out.println("Tosa marcado para o pet " + nomePet);
+                        }
+                        else{
+                            System.out.println("Nao foi encontrado pet associado ao cliente. Tente 'adicionarPet' primeiro");
+                        }
+                    }
+                }
+                else{
+                    System.out.println("Cliente nao encontrado");
+                }
+            }    
+        } catch (SQLException e){
+            System.err.println("Erro ao marcar a tosa: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     @Override
-    public String toString(){
-        return super.toString() +
-            "\nPet(s): " + this.pet;
+    public String toString() {
+        // Usada pra poder concatenar, String nao deixa
+        StringBuilder sb = new StringBuilder();
+        
+        //                                          nome e email             \n
+        sb.append("Nome do Cliente: ").append(this.getNome()).append(System.lineSeparator());
+        sb.append("Email do Cliente: ").append(this.getEmail()).append(System.lineSeparator());
+
+        String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
+
+        // JOIN pra evitar duas queries separadas
+        //          Selecione nome de pets onde o id em pet "user_id" == "id" <- cliente e email = this.getEmail
+        String buscaNomePet = "SELECT p.nome FROM pets p JOIN clientes c ON p.user_id = c.id WHERE c.email = ?";
+
+        try (Connection con = DriverManager.getConnection(url);
+            PreparedStatement ps = con.prepareStatement(buscaNomePet)) {
+
+            ps.setString(1, this.getEmail());
+            try (ResultSet rs = ps.executeQuery()){
+
+                // flag pra saber se tem ou nao tem pet
+                boolean hasAny = false;
+                sb.append("Pets: ");
+                while (rs.next()) {
+                    if (hasAny) sb.append(", ");
+                    sb.append(rs.getString("nome"));
+                    hasAny = true;
+                }
+                if (!hasAny) {
+                    sb.append("nenhum");
+                }
+
+                sb.append(System.lineSeparator());
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar pets: " + e.getMessage());
+            e.printStackTrace();
+            sb.append("Pets: (erro ao buscar)").append(System.lineSeparator());
+        }
+
+        return sb.toString();
     }
 }
