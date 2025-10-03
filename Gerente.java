@@ -1,5 +1,4 @@
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,27 +8,29 @@ import java.sql.SQLException;
     - Quantos pedidos foram feitos e concluidos
     - Demitir e contratar Funcionarios
     - Ver quantos clientes estão registrados no pet_shop
-
+    - Classe capaz de gerar outros gerentes, bom fzr isso
 */
 
-public class Gerente extends Usuarios{
-    private static final String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
-
-
+public class Gerente extends Usuario implements Utilidades{
     // Para evitar que haja a criação de um Gerente que não é funcionario
+
+    public Gerente(){
+        super(null, null);
+    }
+
     private Gerente(String nome, String email, boolean persistido){
         super(nome, email);
     }
 
-    public static Gerente criarEPersistir(String nome, String email) throws EmailJaCadastrado, SQLException{
+    public static Gerente criarEPersistir(String nome, String email){
         String inserirFunc = "INSERT INTO funcionarios (nome, email, cargo) VALUES (?, ?, ?)";
 
-        try (Connection con = DriverManager.getConnection(url);
+        try (Connection con = Database.getConnection();
             PreparedStatement psInserir = con.prepareStatement(inserirFunc)){
             
             psInserir.setString(1, nome);
             psInserir.setString(2, email);
-            psInserir.setString(3, "Gerente");
+            psInserir.setString(3, "gerente");
 
             return new Gerente(nome, email, true);
 
@@ -37,9 +38,12 @@ public class Gerente extends Usuarios{
             String erro = e.getMessage();
 
             if (erro.contains("unique") || erro.contains("uniqueness")){
-                throw new EmailJaCadastrado("Email ja cadastrado como funcionario: " + email);
+                System.out.println("Email ja cadastrado como funcionario: " + email + ".\nNao foi possivel criar o gerente.");
             }
-            throw e;
+            System.err.println(erro);
+            e.printStackTrace();
+
+            return null;
         }
     }
 
@@ -52,7 +56,7 @@ public class Gerente extends Usuarios{
 
         String listaFuncionarios = "SELECT nome, email FROM funcionarios WHERE ativo = 1 ORDER BY id LIMIT ?";
 
-        try (Connection con = DriverManager.getConnection(url);
+        try (Connection con = Database.getConnection();
             PreparedStatement ps = con.prepareStatement(listaFuncionarios)){
 
             ps.setInt(1, quant);
@@ -81,7 +85,7 @@ public class Gerente extends Usuarios{
     public int contarFuncionariosAtivos(){
         String contaFuncAtivos = "SELECT COUNT(*) FROM funcionarios WHERE active = 1";
 
-        try (Connection con = DriverManager.getConnection(url);
+        try (Connection con = Database.getConnection();
             PreparedStatement ps = con.prepareStatement(contaFuncAtivos);
             ResultSet rs = ps.executeQuery()) {
             if (rs.next()){
@@ -105,7 +109,7 @@ public class Gerente extends Usuarios{
 
         String listaClientes = "SELECT nome, email FROM clientes ORDER BY id LIMIT ?";
 
-        try (Connection con = DriverManager.getConnection(url);
+        try (Connection con = Database.getConnection();
             PreparedStatement ps = con.prepareStatement(listaClientes)){
 
             ps.setInt(1, quant);
@@ -134,7 +138,7 @@ public class Gerente extends Usuarios{
     public int contarClientes(){
         String contaClientes = "SELECT COUNT(*) FROM clientes";
 
-        try (Connection con = DriverManager.getConnection(url);
+        try (Connection con = Database.getConnection();
             PreparedStatement ps = con.prepareStatement(contaClientes);
             ResultSet rs = ps.executeQuery()) {
             if (rs.next()){
@@ -152,7 +156,7 @@ public class Gerente extends Usuarios{
     public int contarPedidosConcluidos(){
         String contaPedidosConcluidos = "SELECT COUNT(*) FROM pedidos_concluidos";
 
-        try (Connection con = DriverManager.getConnection(url);
+        try (Connection con = Database.getConnection();
             PreparedStatement ps = con.prepareStatement(contaPedidosConcluidos);
             ResultSet rs = ps.executeQuery()) {
             if (rs.next()){
@@ -170,7 +174,7 @@ public class Gerente extends Usuarios{
     public void demitirFuncionario(String email){
         String demitir = "UPDATE funcionarios SET ativo = 0, demitido_em = CURRENT_TIMESTAMP where email = ?";
 
-        try (Connection con = DriverManager.getConnection(url);
+        try (Connection con = Database.getConnection();
             PreparedStatement psDem = con.prepareStatement(demitir)){
             
             psDem.setString(1, email);
@@ -188,7 +192,7 @@ public class Gerente extends Usuarios{
     public void contratarFuncionario(String nome, String email){
         String contratar = "INSERT INTO funcionarios (nome, email) VALUES (?, ?)";
 
-        try (Connection con = DriverManager.getConnection(url);
+        try (Connection con = Database.getConnection();
             PreparedStatement psCont = con.prepareStatement(contratar)){
             
             psCont.setString(1, nome);
@@ -209,6 +213,12 @@ public class Gerente extends Usuarios{
 
     @Override
     public String toString(){
-        return "a";
+        return "Nome do Gerente: " + this.getNome() +
+                "\nEmail do Gerente: " + this.getEmail();
+    }
+
+    @Override
+    public String listarMetodos(){
+        return "O gerente pode: Listar os funcionarios que estao na ativa, contar eles, contar os clientes registrado e demitir ou contratar um funcionario.\n";
     }
 }

@@ -1,5 +1,4 @@
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,8 +23,7 @@ import java.sql.SQLException;
 
 
 
-public class Funcionario extends Usuarios{
-    private static final String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
+public class Funcionario extends Usuario implements Utilidades{
 
     public Funcionario(String nome, String email){
         super(nome, email);
@@ -51,7 +49,7 @@ public class Funcionario extends Usuarios{
             LIMIT 5;
             """;
 
-        try(Connection con = DriverManager.getConnection(url);           
+        try(Connection con = Database.getConnection();           
             PreparedStatement ps = con.prepareStatement(sql);
             ResultSet rs = ps.executeQuery()) {
             
@@ -80,7 +78,7 @@ public class Funcionario extends Usuarios{
     }
     // Usa do id exposto na tabela para tornar o atributo tosa em true
     public void tosar(int idLista){
-        try(Connection con = DriverManager.getConnection(url);
+        try(Connection con = Database.getConnection();
             PreparedStatement psPet = con.prepareStatement("SELECT pet_id FROM lista_de_espera WHERE id = ?");
             PreparedStatement psTosa = con.prepareStatement("SELECT tosa FROM pets WHERE id = ?");
             PreparedStatement psUpdateTosa = con.prepareStatement("UPDATE pets SET tosa = 1 WHERE id = ?")){
@@ -117,7 +115,7 @@ public class Funcionario extends Usuarios{
     // Usa do id exposto na tabela para tornar o atributo banho true
     public void darBanho(int idLista){
 
-        try(Connection con = DriverManager.getConnection(url);
+        try(Connection con = Database.getConnection();
             PreparedStatement psPet = con.prepareStatement("SELECT pet_id FROM lista_de_espera WHERE id = ?");
             PreparedStatement psBanho = con.prepareStatement("SELECT banho FROM pets WHERE id = ?");
             PreparedStatement psUpdateBanho = con.prepareStatement("UPDATE pets SET banho = 1 WHERE id = ?")){
@@ -210,6 +208,13 @@ public class Funcionario extends Usuarios{
     public String toString(){
         return "Nome do Funcionario: " + this.getNome() +
                 "\nEmail do Funcionario: " + this.getEmail();
+    }
+
+    @Override
+    public String listarMetodos(){
+        return "O funcionario pode: Checar pets em espera, pets que precisam de tosa ou banho\n" +
+                "Tosar e dar banho em um pet, dependendo de sua necessidade que pode ser vista pela funcao anterior.\n" +
+                "Perceba que eh importante visualizar o id do pet na lista de espera para realizar esses metodos (tosar e dar banho).\n";
     }
 
 }

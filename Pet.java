@@ -30,6 +30,6 @@ public class Pet {
     public String toString(){
         return "\nNomePet: " + this.nomePet +
             "\nEspecie: " + this.especie +
-            "\nRaca: " + this.getRaca();
+            "\nRaca: " + this.raca;
     }
 }

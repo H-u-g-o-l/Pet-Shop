@@ -1,12 +1,11 @@
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
-// java -cp "C:\Users\hgbr1\Programas\Exercises\PetShop\Pet-Shop" MyMainClass
 
+// java -cp "C:\Users\hgbr1\Programas\Exercises\PetShop\Pet-Shop" MyMainClass   
 
 /*
  * Cliente possui: 
@@ -17,19 +16,22 @@ import java.util.Scanner;
  * 
  * Metodos:
  * 
- * contrutor private (factory)
+ * contrutor publico (factory)
  * criarEPersistir (adiciona o objeto na memoria se e somente se ele ir para o banco de dados)
  * 
  * Metodo pra retornar os pets com seus nomes 
  * adicionaPet (add em memoria e no banco de dados)
  * marcaBanho (nome alteravel) (vai por o pet "nome" para a lista_de_espera)
  * marcaTosa (poe o pet para a lista de espera)
- * marcaBanhoETosa
  * 
  * toString
  */
-public class Cliente extends Usuarios{
-    private static final String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
+
+public class Cliente extends Usuario implements Utilidades{
+
+    public Cliente(){
+        super(null, null);
+    }
 
     // Para evitar que haja a criação do objeto na memória foi usado do Factory Method
     private Cliente(String nome, String email, boolean persistido){
@@ -37,11 +39,11 @@ public class Cliente extends Usuarios{
     }
 
     // Adiciona o cliente ao db caso o email seja unico
-    public static Cliente criarEPersistir(String nome, String email) throws EmailJaCadastrado, SQLException{
-        String sql = "INSERT INTO clientes (nome, email) VALUES (?, ?)";
+    public static Cliente criarEPersistir(String nome, String email){
+        String inserirCliente = "INSERT INTO clientes (nome, email) VALUES (?, ?)";
 
-        try(Connection con = DriverManager.getConnection(url);
-            PreparedStatement ps = con.prepareStatement(sql)){
+        try(Connection con = Database.getConnection();
+            PreparedStatement ps = con.prepareStatement(inserirCliente)){
 
             ps.setString(1, nome);
             ps.setString(2, email);
@@ -52,9 +54,13 @@ public class Cliente extends Usuarios{
             String erro = e.getMessage();
 
             if (erro.contains("unique") || erro.contains("uniqueness")){
-                throw new EmailJaCadastrado("Email ja cadastrado: " + email);
+                System.out.println("Email ja cadastrado: " + email);
             }
-            throw e;
+            else{
+                System.err.println("Erro ao criar cliente: " + erro);
+                e.printStackTrace();
+            }
+            return null;
         }
     }
 
@@ -72,7 +78,6 @@ public class Cliente extends Usuarios{
                 sc.nextLine();
             }
         }
-        sc.close();
 
         switch(escolha){
             case 1:
@@ -85,13 +90,13 @@ public class Cliente extends Usuarios{
                 adicionarPet(new Pet(nome, especie, raca));
                 break;
         }
-    };
+    }
 
     public void adicionarPet(Pet pet) {
         String inserir = "INSERT INTO pets (user_id, nome, raca, banho, tosa) VALUES (?, ?, ?, ?, ?)";
         String buscaIdDono = "SELECT id FROM clientes WHERE email = ?";
 
-        try (Connection con = DriverManager.getConnection(url);
+        try (Connection con = Database.getConnection();
             PreparedStatement psUpdate = con.prepareStatement(inserir);
             PreparedStatement psIdDono = con.prepareStatement(buscaIdDono)){
             
@@ -112,20 +117,18 @@ public class Cliente extends Usuarios{
                 }
             }
         } catch(Exception e){
-            System.err.println("Erro ao adicionar pet");
+            System.err.println("Erro ao adicionar pet: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     public void marcaBanho(String nomePet){
-        // Eu preciso encontrar o animal baseado no nome e no usuario, eu ja possuo o email do usuario entao com ele eu consigo pegar o id e do id eu busco pet com x nome
-
         String buscaCliente = "SELECT id FROM clientes WHERE email = ?";
         String buscaPet = "SELECT id FROM pets WHERE user_id = ? AND nome = ?";
         String updateBanho = "UPDATE pets SET banho = 0 WHERE id = ?";
         String insertLista = "INSERT INTO lista_de_espera (pet_id) VALUES (?)";
 
-        try (Connection con = DriverManager.getConnection(url);
+        try (Connection con = Database.getConnection();
             PreparedStatement psCliente = con.prepareStatement(buscaCliente);
             PreparedStatement psPet = con.prepareStatement(buscaPet);
             PreparedStatement psUpdate = con.prepareStatement(updateBanho);
@@ -166,13 +169,12 @@ public class Cliente extends Usuarios{
     }
 
     public void marcaTosa(String nomePet){
-
         String buscaCliente = "SELECT id FROM clientes WHERE email = ?";
         String buscaPet = "SELECT id FROM pets WHERE user_id = ? AND nome = ?";
         String updateTosa = "UPDATE pets SET tosa = 0 WHERE id = ?";
         String insertLista = "INSERT INTO lista_de_espera (pet_id) VALUES (?)";
 
-        try (Connection con = DriverManager.getConnection(url);
+        try (Connection con = Database.getConnection();
             PreparedStatement psCliente = con.prepareStatement(buscaCliente);
             PreparedStatement psPet = con.prepareStatement(buscaPet);
             PreparedStatement psUpdate = con.prepareStatement(updateTosa);
@@ -225,7 +227,7 @@ public class Cliente extends Usuarios{
         //          Selecione nome de pets onde o id em pet "user_id" == "id" <- cliente e email = this.getEmail
         String buscaNomePet = "SELECT p.nome FROM pets p JOIN clientes c ON p.user_id = c.id WHERE c.email = ?";
 
-        try (Connection con = DriverManager.getConnection(url);
+        try (Connection con = Database.getConnection();
             PreparedStatement ps = con.prepareStatement(buscaNomePet)) {
 
             ps.setString(1, this.getEmail());
@@ -253,5 +255,10 @@ public class Cliente extends Usuarios{
         }
 
         return sb.toString();
+    }
+
+    @Override
+    public String listarMetodos(){
+        return "O cliente pode: adicionar um pet e marcar banho ou tosa, use dos nomes de seu pet para realizar o (s) metodo (s)";
     }
 }
