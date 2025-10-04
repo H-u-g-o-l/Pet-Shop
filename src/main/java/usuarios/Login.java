@@ -4,7 +4,7 @@ import usuarios.Usuario;
 import usuarios.Cliente;
 import usuarios.Gerente;
 
-import src.main.java.Database;
+import main.Database;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -121,24 +121,20 @@ public class Login {
         }
     }
 
-    private Gerente logarGerente(String nome, String email){
-    String buscaGerente = "SELECT nome FROM funcionarios WHERE email = ? AND nome = ? AND cargo = 'gerente'";
-    
-    try (Connection con = Database.getConnection();
-        PreparedStatement psBusca = con.prepareStatement(buscaGerente)){
-            
-        psBusca.setString(1, email);
-        psBusca.setString(2, nome);
+    private Gerente logarGerente(String nome, String email) {
+        String buscaGerente = "SELECT nome FROM funcionarios WHERE email = ? AND nome = ? AND cargo = 'gerente'";
 
-        try (ResultSet rs = psBusca.executeQuery()) {
-            if (rs.next()) {
-                Gerente g = new Gerente();
-                g.setNome(nome);
-                g.setEmail(email);
+        try (Connection con = Database.getConnection();
+            PreparedStatement psBusca = con.prepareStatement(buscaGerente)){
+            psBusca.setString(1, email);
+            psBusca.setString(2, nome);
+            ResultSet rs = psBusca.executeQuery();
 
-                return g;
+            try (rs) {
+                if (rs.next()) {
+                    return new Gerente(nome, email);
                 }
-                else{
+                else {
                     System.out.println("Credenciais invalidas para gerente.");
                     return null;
                 }

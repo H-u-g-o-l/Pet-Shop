@@ -4,8 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import src.main.java.Database;
-import src.main.java.Utilidades;
+import main.Database;
+import main.Utilidades;
 
 /* Classe Funcionario que "trata" dos pets
 
@@ -28,7 +28,7 @@ import src.main.java.Utilidades;
 
 
 
-public class Funcionario extends Usuario implements Utilidades{
+public class Funcionario extends usuarios.Usuario implements Utilidades {
 
     public Funcionario(String nome, String email){
         super(nome, email);

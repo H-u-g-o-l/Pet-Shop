@@ -1,23 +1,16 @@
-package src.main.java;
+package main;
 
-// Classe criada com o intuito de encapsular url e centralizar noções do banco de dados
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public final class Database {
-    private static final String url = "jdbc:sqlite:C:\\Users\\hgbr1\\Programas\\Exercises\\PetShop\\Pet-Shop\\petshop.db";
-
-    // Construtor que nao inicia nada, clean
+    private static final String url = "jdbc:sqlite:data/petShop.db";
     private Database (){};
 
-    public static Connection getConnection() throws SQLException{
+    public static Connection getConnection() throws SQLException {
         Connection con = DriverManager.getConnection(url);
-
+        System.out.println("Connected to: " + new java.io.File("petShop.db").getAbsolutePath());
         return con;
-    }
-
-    public static String getUrl(){
-        return url;
     }
 }

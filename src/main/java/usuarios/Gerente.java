@@ -5,8 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import src.main.java.Database;
-import src.main.java.Utilidades;
+import main.Database;
+import main.Utilidades;
 
 /* Classe Gerente criada com o intuito de obter informações mais gerais sobre o pet shop e seu funcionamento interior
  * 
@@ -40,8 +40,8 @@ import src.main.java.Utilidades;
 
 public class Gerente extends Usuario implements Utilidades{
 
-    public Gerente(){
-        super(null, null);
+    public Gerente(String nome, String email) {
+        super(nome, email);
     }
 
     private Gerente(String nome, String email, boolean persistido){
