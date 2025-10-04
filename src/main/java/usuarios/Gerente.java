@@ -1,4 +1,5 @@
-package src.main.java.usuarios;
+package usuarios;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

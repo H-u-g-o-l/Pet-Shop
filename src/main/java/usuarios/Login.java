@@ -1,5 +1,10 @@
-package src.main.java.usuarios;
+package usuarios;
 
+import usuarios.Usuario;
+import usuarios.Cliente;
+import usuarios.Gerente;
+
+import src.main.java.Database;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -65,7 +70,7 @@ public class Login {
     String buscaCliente = "SELECT nome FROM clientes WHERE email = ? AND nome = ?";
     
     try (Connection con = Database.getConnection();
-        PreparedStatement psBusca = con.prepareStatement(buscaCliente)){
+         PreparedStatement psBusca = con.prepareStatement(buscaCliente)){
             
         psBusca.setString(1, email);
         psBusca.setString(2, nome);

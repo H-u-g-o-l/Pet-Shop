@@ -1,5 +1,7 @@
-package src.main.java.pets;
-public class Gato extends Pet{
+package pets;
+import pets.Pet;
+
+public class Gato extends Pet {
 
     public Gato(String nomePet,String especie, String raca){
         super(nomePet, especie, raca);

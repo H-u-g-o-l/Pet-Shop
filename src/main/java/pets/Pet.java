@@ -1,4 +1,5 @@
-package src.main.java.pets;
+package pets;
+
 public class Pet {
     private String nomePet;
     private String especie;

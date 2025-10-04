@@ -1,4 +1,4 @@
-package src.main.java.usuarios;
+package usuarios;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,9 +7,9 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 import src.main.java.Database;
 import src.main.java.Utilidades;
-import src.main.java.pets.Cachorro;
-import src.main.java.pets.Gato;
-import src.main.java.pets.Pet;
+import pets.Cachorro;
+import pets.Gato;
+import pets.Pet;
 
 /* Classe Cliente possui: 
  * 
