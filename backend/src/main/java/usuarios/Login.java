@@ -1,12 +1,11 @@
 package src.main.java.usuarios;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
-
+import src.main.java.Database;
 
 
 /*  Classe Login que lida com o login e registro de usuarios

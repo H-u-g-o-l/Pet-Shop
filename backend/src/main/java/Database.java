@@ -1,5 +1,4 @@
 package src.main.java;
-
 // Classe criada com o intuito de encapsular url e centralizar noções do banco de dados
 import java.sql.Connection;
 import java.sql.DriverManager;

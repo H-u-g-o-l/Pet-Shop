@@ -1,9 +1,0 @@
--- CREATE TABLE funcionarios(
---     id INTEGER PRIMARY KEY,
---     nome TEXT NOT NULL,
---     email TEXT NOT NULL UNIQUE,
---     cargo TEXT NOT NULL DEFAULT 'funcionario',
---     ativo INTEGER NOT NULL DEFAULT 1,
---     contratado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
---     demitido_em DATETIME NULL
--- );

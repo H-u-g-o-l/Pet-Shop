@@ -1,5 +1,0 @@
--- CREATE TABLE lista_de_espera(
---     id INTEGER PRIMARY KEY,
---     pet_id INTEGER REFERENCES pets(id),
---     pedido_feito DATETIME DEFAULT CURRENT_TIMESTAMP
--- );
