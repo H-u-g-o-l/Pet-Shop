@@ -7,24 +7,26 @@ import java.util.Scanner;
 
 // java -cp "C:\Users\hgbr1\Programas\Exercises\PetShop\Pet-Shop" MyMainClass   
 
-/*
- * Cliente possui: 
+/* Classe Cliente possui: 
+ * 
  * -Nome
  * -Email unico
  * 
- * -pet (Pode ter 0 ou varios)
  * 
  * Metodos:
  * 
  * contrutor publico (factory)
  * criarEPersistir (adiciona o objeto na memoria se e somente se ele ir para o banco de dados)
  * 
- * Metodo pra retornar os pets com seus nomes 
+ * Metodo pra retornar os pets com seus nomes:
  * adicionaPet (add em memoria e no banco de dados)
- * marcaBanho (nome alteravel) (vai por o pet "nome" para a lista_de_espera)
+ * 
+ * marcaBanho (vai por o pet "nome" para a lista_de_espera)
  * marcaTosa (poe o pet para a lista de espera)
  * 
- * toString
+ * toString, retorna nome, email e pets caso haja algum
+ * 
+ * listarMetodos, retorna uma simples descrição do que um cliente pode fazer
  */
 
 public class Cliente extends Usuario implements Utilidades{
@@ -40,6 +42,11 @@ public class Cliente extends Usuario implements Utilidades{
 
     // Adiciona o cliente ao db caso o email seja unico
     public static Cliente criarEPersistir(String nome, String email){
+
+        if (Usuario.checaNome(nome) == null || Usuario.checaEmail(email) == null){
+            return null;
+        }
+
         String inserirCliente = "INSERT INTO clientes (nome, email) VALUES (?, ?)";
 
         try(Connection con = Database.getConnection();

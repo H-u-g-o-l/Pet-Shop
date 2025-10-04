@@ -5,22 +5,29 @@ import java.sql.SQLException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-/* Classe que lida com o login e registro de usuarios
+/*  Classe Login que lida com o login e registro de usuarios
+ *  Criada com o intuito que na main alguem inicialize um usuário e use dessa função para puxar os dados do banco de dados
  * 
- *  Metodos: 
+ *  Atributos:
+ *  Nenhum
  * 
- *  Logar()
- *  Registrar()
+ *  Métodos: 
+ * 
+ *  Logar:
+ *  Usa de scanner e faz prompts para o usuário (isso deve ser deixado para o front)
+ * 
+ *  LogarCliente, LogarFuncionario, LogarGerente. São os métodos direcionados para fazer uma busca só nos bancos de dados adequados
+ *  Retorna nulo caso não consiga achar o Usuario no banco de dados  
+ * 
+ *  Registrar:
+ *  Essa função só Registra Clientes, Funcionarios são contratados pelos Gerentes e Gerentes, no momento, são adicionados diretamente pelo banco de dados
  *  
  */
 
 public class Login {
     
-    // Pode ser tanto cliente quanto funcionário
     public Usuario logar(String nome, String email){
-        // Checar primeiro se o existe alguem com esse email e nome em funcionarios e dps em clientes
-        // dps printar "logou como (CLIENTE)/(FUNCIONARIO) NOME" return true
-        // Caso nao ache nada, printe certifique suas credenciais ou tente se registrar novamente return false
+        
         Scanner sc = new Scanner(System.in);
         int escolha = -1;
 
@@ -68,10 +75,10 @@ public class Login {
                 return c;
 
                 }
-                else{
-                    System.out.println("Credenciais inválidas para cliente.");
-                    return null;
-                }
+            else{
+                System.out.println("Credenciais inválidas para cliente.");
+                return null;
+            }
             }
         } catch (SQLException e){
             e.printStackTrace();
@@ -80,7 +87,7 @@ public class Login {
     }
 
     private Funcionario logarFuncionario(String nome, String email){
-    String buscaFunc = "SELECT nome FROM funcionarios WHERE email = ? AND nome = ?";
+    String buscaFunc = "SELECT nome FROM funcionarios WHERE email = ? AND nome = ? AND ativo = 1";
     
     try (Connection con = Database.getConnection();
         PreparedStatement psBusca = con.prepareStatement(buscaFunc)){
@@ -133,7 +140,7 @@ public class Login {
         }
     }
 
-    // So registra clientes
+    // Registra clientes
     public Cliente registrar(String nome, String email){
         return Cliente.criarEPersistir(nome, email);
     }

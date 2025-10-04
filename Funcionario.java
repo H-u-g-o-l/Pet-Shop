@@ -3,22 +3,23 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/*
- * Funcionario possui:
- *  - Nome 
- *  - Email unico
+/* Classe Funcionario que "trata" dos pets
+
+ *  Atributos:
+ *  nome, email
  * 
- *  Metodos:
+ *  Métodos que são chamados (public):
  * 
- *  ESSES METODOS PRECISAM SER CHAMADOS
- *  checaPetsEmEspera (visualiza os 5 primeiros pets, EM ORDEM DE CHEGADA, que precisam de banho ou tosa)
- *  tosar (usa do id da lista pra tosar o pet)
- *  darBanho (usa do id da lista pra dar banho no pet)
- *  toString
+ *  checaPetsEmEspera(limite), checa quantos pets estao precisando de banho/tosa, tambem informa o id deles na lista que é crucial para o funcionamento dos outros métodos
+ *  tosar, usa do id da lista para "tosar", (altera o atributo para 1)
+ *  darBanho, mesma coisa que tosar mas agora para banho
+ *  
+ *  toString, retorna nome e email do funcionario 
+ *  listarMetodos, retorna uma descrição simples do que um funcionário pode fazer 
  * 
- *  ESSES METODOS SAO ATIVADOS PASSIVAMENTE
- *  petPronto (se ele estiver nos conformes ele é retirado da lista de espera)
- *  adicionaPedidoConcluido (armazena toda ação que foi feita, se x pet foi tosado ou banhado em que dia e por quem)
+ *  Métodos que são chamados por tosar e darBanho:
+ *      petPronto (se ele estiver nos conformes ele é retirado da lista de espera)
+*       adicionaPedidoConcluido (armazena toda ação que foi feita, se x pet foi tosado ou banhado em que dia e por quem)
  */
 
 
@@ -29,7 +30,7 @@ public class Funcionario extends Usuario implements Utilidades{
         super(nome, email);
     }
 
-    public void checaPetsEmEspera(){
+    public void checaPetsEmEspera(int lim){
         // Essa query junta as informações compativeis do id de pets com o id exposto na lista de espera
         // e junta os dados de clientes com o id dos pets que estao na lista
         // CUIDADO COM OS NOMES
@@ -46,36 +47,41 @@ public class Funcionario extends Usuario implements Utilidades{
             JOIN pets p ON le.pet_id = p.id
             JOIN clientes c ON p.user_id = c.id
             ORDER BY le.pedido_feito
-            LIMIT 5;
+            LIMIT ?;
             """;
 
         try(Connection con = Database.getConnection();           
-            PreparedStatement ps = con.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery()) {
+            PreparedStatement ps = con.prepareStatement(sql)){
             
-            while (rs.next()){
-                int idEntrada = rs.getInt("entrada_id");
-                String nomeDono = rs.getString("nome_dono");
-                String nomePet = rs.getString("nome_pet");
-                String racaPet = rs.getString("raca_pet");
-                boolean banho = rs.getBoolean("banho");
-                boolean tosa = rs.getBoolean("tosa");
-            
-                System.out.println(
-                "Id da entrada: " + idEntrada +
-                "\nDono: " + nomeDono +
-                "\nNome do pet: " + nomePet +
-                "\nRaca: " + racaPet + 
-                "\nEsta limpo: " + banho +
-                "\nEsta tosado: " + tosa +
-                "\nPedido recebido: " + rs.getDate("pedido_feito")
-                );
+            ps.setInt(1, lim);
+            try (ResultSet rs = ps.executeQuery()){
+                while (rs.next()){
+                    int idEntrada = rs.getInt("entrada_id");
+                    String nomeDono = rs.getString("nome_dono");
+                    String nomePet = rs.getString("nome_pet");
+                    String racaPet = rs.getString("raca_pet");
+                    boolean banho = rs.getBoolean("banho");
+                    boolean tosa = rs.getBoolean("tosa");
+                
+                    System.out.println(
+                    "Id da entrada: " + idEntrada +
+                    "\nDono: " + nomeDono +
+                    "\nNome do pet: " + nomePet +
+                    "\nRaca: " + racaPet + 
+                    "\nEsta limpo: " + banho +
+                    "\nEsta tosado: " + tosa +
+                    "\nPedido recebido: " + rs.getDate("pedido_feito")
+                    );
+                }
             }
+            
+
         } catch (SQLException e){
             System.err.println("Erro ao listar pets em espera: " + e.getMessage());
             e.printStackTrace();
         }
     }
+    
     // Usa do id exposto na tabela para tornar o atributo tosa em true
     public void tosar(int idLista){
         try(Connection con = Database.getConnection();

@@ -3,16 +3,37 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/* Classe encarregada de:
-    - Ver quantos funcionarios tem
-    - Quantos pedidos foram feitos e concluidos
-    - Demitir e contratar Funcionarios
-    - Ver quantos clientes estão registrados no pet_shop
-    - Classe capaz de gerar outros gerentes, bom fzr isso
-*/
+/* Classe Gerente criada com o intuito de obter informações mais gerais sobre o pet shop e seu funcionamento interior
+ * 
+ * Atributos:
+ *  Nome e email (da classe pai)
+ *  (posso adicionar nível de responsabilidade, gerentes de nível 1 e 2, 2 só interage com funcionários e 1 interage com eles + os gerentes de n. 2)
+ * 
+ *  Métodos:
+ *  Construtor nulo (público), construtor com parametros privado (factory).
+ *  Nessa Classe foi usado do método Factory para criar Gerentes mas isso não é necessariamente usado no código, só talvez com a implementação do nível do gerente
+ *  
+ *  listarFuncionariosAtivos(limite), recebe um inteiro de delimita o limite de quantos funcionários, que estão trabalhando, serão exibidos.
+ * 
+ *  contaFuncionariosAtivos(), só retorna a quantia de funcionários trabalhando
+ * 
+ *  listarClientes(limite), mesma coisa que listarFuncionariosAtivos
+ *  contarClientes(), msm coisa que contar funcionários
+ * 
+ *  contarPedidosConcluidos, exibe a quantia de pedidos concluídos, pedidos concluídos são os serviços feitos, não necessariamente o pedido do cliente feito mas sim quem fez o que
+ *  se x funcionário da banho, ele é registrado como alguém que fez isso, se y faz a tosa isso está registrado
+ * 
+ *  demitirFuncionario(email), torna o 'ativo' no banco de dados = 0, demitindo-o.
+ * 
+ *  contratarFuncionarios(nome, email), cria um funcionario no banco de dados
+ * 
+ *  toString, retorna nome e email
+ * 
+ *  listarMetodos, retorna uma string falando sobre o que um gerente faz
+ */
+
 
 public class Gerente extends Usuario implements Utilidades{
-    // Para evitar que haja a criação de um Gerente que não é funcionario
 
     public Gerente(){
         super(null, null);
@@ -48,9 +69,9 @@ public class Gerente extends Usuario implements Utilidades{
     }
 
     // Listar funcionarios ativos
-    public void listarFuncionariosAtivos(int quant){
-        if (quant <= 0){
-            System.out.println("Quantidade para listar errada, tente novamente");
+    public void listarFuncionariosAtivos(int lim){
+        if (lim <= 0){
+            System.out.println("Limite para listar errado, tente novamente");
             return;
         }
 
@@ -59,7 +80,7 @@ public class Gerente extends Usuario implements Utilidades{
         try (Connection con = Database.getConnection();
             PreparedStatement ps = con.prepareStatement(listaFuncionarios)){
 
-            ps.setInt(1, quant);
+            ps.setInt(1, lim);
 
             try (ResultSet rs = ps.executeQuery()){
                 boolean algum = false;
@@ -98,11 +119,10 @@ public class Gerente extends Usuario implements Utilidades{
             return 0;
         }
     }
-
-
+ 
     // Listar clientes
-    public void listarClientes(int quant){
-        if (quant <= 0){
+    public void listarClientes(int lim){
+        if (lim <= 0){
             System.out.println("Quantidade para listar errada, tente novamente");
             return;
         }
@@ -112,7 +132,7 @@ public class Gerente extends Usuario implements Utilidades{
         try (Connection con = Database.getConnection();
             PreparedStatement ps = con.prepareStatement(listaClientes)){
 
-            ps.setInt(1, quant);
+            ps.setInt(1, lim);
 
             try (ResultSet rs = ps.executeQuery()){
                 boolean algum = false;
@@ -170,7 +190,7 @@ public class Gerente extends Usuario implements Utilidades{
         }
     }
     
-    // demitir funcionario
+    // Demitir funcionario
     public void demitirFuncionario(String email){
         String demitir = "UPDATE funcionarios SET ativo = 0, demitido_em = CURRENT_TIMESTAMP where email = ?";
 
@@ -188,7 +208,7 @@ public class Gerente extends Usuario implements Utilidades{
         }
     }
 
-    // contratar funcionario
+    // Contratar funcionario
     public void contratarFuncionario(String nome, String email){
         String contratar = "INSERT INTO funcionarios (nome, email) VALUES (?, ?)";
 

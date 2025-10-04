@@ -25,11 +25,4 @@ public class Pet {
     public String getRaca(){
         return this.raca;
     }
-
-    // ALTERAR
-    public String toString(){
-        return "\nNomePet: " + this.nomePet +
-            "\nEspecie: " + this.especie +
-            "\nRaca: " + this.raca;
-    }
 }
