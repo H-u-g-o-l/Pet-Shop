@@ -1,3 +1,4 @@
+package src.main.java.usuarios;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,7 +26,7 @@ import java.util.Scanner;
  */
 
 public class Login {
-    
+
     public Usuario logar(String nome, String email){
         
         Scanner sc = new Scanner(System.in);

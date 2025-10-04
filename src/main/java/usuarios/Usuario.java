@@ -1,3 +1,4 @@
+package src.main.java.usuarios;
 import java.util.regex.Pattern;
 
 /* Classe pai de gerente, funcionario e cliente.

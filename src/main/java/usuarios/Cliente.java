@@ -1,11 +1,10 @@
+package src.main.java.usuarios;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.InputMismatchException;
-import java.util.Scanner;
-
-// java -cp "C:\Users\hgbr1\Programas\Exercises\PetShop\Pet-Shop" MyMainClass   
+import java.util.Scanner;   
 
 /* Classe Cliente possui: 
  * 

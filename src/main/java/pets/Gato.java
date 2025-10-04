@@ -1,3 +1,4 @@
+package src.main.java.pets;
 public class Gato extends Pet{
 
     public Gato(String nomePet,String especie, String raca){

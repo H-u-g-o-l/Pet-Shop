@@ -1,3 +1,4 @@
+package src.main.java.pets;
 public class Pet {
     private String nomePet;
     private String especie;
