@@ -33,9 +33,8 @@ import pets.Pet;
  * listarMetodos, retorna uma simples descrição do que um cliente pode fazer
  */
 
-public class Cliente extends Usuario implements Utilidades{
-
-    public Cliente(){
+public class Cliente extends Usuario implements Utilidades {
+    public Cliente() {
         super(null, null);
     }
 
@@ -45,9 +44,8 @@ public class Cliente extends Usuario implements Utilidades{
     }
 
     // Adiciona o cliente ao db caso o email seja unico
-    public static Cliente criarEPersistir(String nome, String email){
-
-        if (Usuario.checaNome(nome) == null || Usuario.checaEmail(email) == null){
+    public static Cliente criarEPersistir(String nome, String email) {
+        if (Usuario.checaNome(nome) == null){
             return null;
         }
 
@@ -62,15 +60,8 @@ public class Cliente extends Usuario implements Utilidades{
 
             return new Cliente(nome, email, true);
         } catch (SQLException e){
-            String erro = e.getMessage();
-
-            if (erro.contains("unique") || erro.contains("uniqueness")){
-                System.out.println("Email ja cadastrado: " + email);
-            }
-            else{
-                System.err.println("Erro ao criar cliente: " + erro);
-                e.printStackTrace();
-            }
+            System.err.println("Erro ao criar cliente: " + e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }

@@ -34,10 +34,8 @@ import java.util.Scanner;
  */
 
 public class Login {
-
-    public Usuario logar(String nome, String email){
-        
-        Scanner sc = new Scanner(System.in);
+    private final Scanner sc = new Scanner(System.in);
+    public Usuario logar(String nome, String email) {
         int escolha = -1;
 
         System.out.println("Selecione 1 caso queira logar como cliente, 2 caso queira logar como funcionario e 3 caso queira logar como gerente");
@@ -146,8 +144,18 @@ public class Login {
     }
 
     // Registra clientes
-    public Cliente registrar(String nome, String email){
-        return Cliente.criarEPersistir(nome, email);
-    }
+    public Cliente registrar() {
+        System.out.println("Digite o nome do cliente: ");
+        String nome = sc.nextLine();
+        System.out.println("Digite o email do cliente: ");
+        String email = sc.nextLine();
 
+        try {
+            String validEmail = Usuario.checaEmail(email);
+            return Cliente.criarEPersistir(nome, validEmail);
+        } catch (UsuarioError e) {
+            System.out.println(e.toString());
+            return registrar();
+        }
+    }
 }
