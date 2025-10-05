@@ -89,6 +89,8 @@ public class Gerente extends Usuario implements Utilidades{
 
             try (ResultSet rs = ps.executeQuery()){
                 boolean algum = false;
+
+                System.out.println("-----------------------------------------");
                 while (rs.next()){
                     algum = true;
                     String nome = rs.getString("nome");
@@ -102,19 +104,20 @@ public class Gerente extends Usuario implements Utilidades{
                 }
             }
         } catch (SQLException e){
-            System.err.println("Erro ao listar funcionarios: " + e.getMessage());
-            e.printStackTrace();
+            System.out.println("Erro ao listar funcionarios: " + e.getMessage());
+//            e.printStackTrace();
         }
     }
 
     // Ver quantos funcionarios tem trabalhando
     public int contarFuncionariosAtivos(){
-        String contaFuncAtivos = "SELECT COUNT(*) FROM funcionarios WHERE active = 1";
+        String contaFuncAtivos = "SELECT COUNT(*) FROM funcionarios WHERE ativo = 1";
 
         try (Connection con = Database.getConnection();
             PreparedStatement ps = con.prepareStatement(contaFuncAtivos);
             ResultSet rs = ps.executeQuery()) {
             if (rs.next()){
+                System.out.println("----------------------------------------");
                 return rs.getInt(1);
             }
             return 0;
@@ -141,6 +144,7 @@ public class Gerente extends Usuario implements Utilidades{
 
             try (ResultSet rs = ps.executeQuery()){
                 boolean algum = false;
+                System.out.println("----------------------------------------");
                 while (rs.next()){
                     algum = true;
                     String nome = rs.getString("nome");
@@ -167,6 +171,7 @@ public class Gerente extends Usuario implements Utilidades{
             PreparedStatement ps = con.prepareStatement(contaClientes);
             ResultSet rs = ps.executeQuery()) {
             if (rs.next()){
+                System.out.println("----------------------------------------");
                 return rs.getInt(1);
             }
             return 0;
@@ -185,6 +190,7 @@ public class Gerente extends Usuario implements Utilidades{
             PreparedStatement ps = con.prepareStatement(contaPedidosConcluidos);
             ResultSet rs = ps.executeQuery()) {
             if (rs.next()){
+                System.out.println("----------------------------------------");
                 return rs.getInt(1);
             }
             return 0;
@@ -206,7 +212,7 @@ public class Gerente extends Usuario implements Utilidades{
             if (psDem.executeUpdate() == 0){
                 System.out.println("Funcionario nao encontrado.");
             }
-            System.out.println("Funcionario com o email: " + email + " foi demitido");
+            System.out.println("Funcionario com o email: " + email + " foi demitido.");
         } catch (SQLException e){
             System.err.println("Erro ao demitir funcionario com email: " + email + " " + e.getMessage());
             e.printStackTrace();
@@ -215,6 +221,14 @@ public class Gerente extends Usuario implements Utilidades{
 
     // Contratar funcionario
     public void contratarFuncionario(String nome, String email){
+        try {
+            String validEmail = Usuario.checaEmail(email);
+        } catch (UsuarioError e) {
+            System.out.println(e.toString());
+            System.out.println();
+            return;
+        }
+
         String contratar = "INSERT INTO funcionarios (nome, email) VALUES (?, ?)";
         
         try (Connection con = Database.getConnection();
@@ -224,6 +238,7 @@ public class Gerente extends Usuario implements Utilidades{
             psCont.setString(2, email);
 
             psCont.executeUpdate();
+            System.out.println("Funcionario com nome: " + nome + " e email: " + email + " foi contratado!");
         } catch (SQLException e){
             String erro = e.getMessage();
 
@@ -244,6 +259,11 @@ public class Gerente extends Usuario implements Utilidades{
 
     @Override
     public String listarMetodos(){
-        return "O gerente pode: Listar os funcionarios que estao na ativa, contar eles, contar os clientes registrado e demitir ou contratar um funcionario.\n";
+        return  "- 1 Listar os funcionarios que estao na ativa\n" +
+                "- 2 Contar funcionarios ativos \n" +
+                "- 3 Contar os clientes registrados  \n" +
+                "- 4 Contar Pedidos concluidos\n" +
+                "- 5 Demitir funcionario \n" +
+                "- 6 Contratar um funcionario.";
     }
 }

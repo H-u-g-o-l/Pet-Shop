@@ -35,7 +35,7 @@ import pets.Pet;
 
 public class Cliente extends Usuario implements Utilidades {
     public Cliente() {
-        super(null, null);
+        super();
     }
 
     // Para evitar que haja a criação do objeto na memória foi usado do Factory Method
@@ -58,6 +58,8 @@ public class Cliente extends Usuario implements Utilidades {
             ps.setString(2, email);
             ps.executeUpdate();
 
+            System.out.println("Cliente criado com sucesso.");
+
             return new Cliente(nome, email, true);
         } catch (SQLException e){
             System.err.println("Erro ao criar cliente: " + e.getMessage());
@@ -67,30 +69,16 @@ public class Cliente extends Usuario implements Utilidades {
     }
 
     public void adicionarPet(String nome, String especie, String raca){
-        Scanner sc = new Scanner(System.in);
-        
-        int escolha = -1;
-        System.out.println("Por favor digite: 1 se seu pet for um cachorro\n2 se seu pet for um gato \n3 se seu pet não for nenhum dos 2");
-        while(true){
-            try {
-                escolha = sc.nextInt();
-                break;
-            } catch (InputMismatchException e){
-                System.out.println("Resposta invalida. Tente Novamente.");
-                sc.nextLine();
-            }
-        }
+        String normEspecie = especie.toLowerCase();
 
-        switch(escolha){
-            case 1:
-                adicionarPet(new Cachorro(nome, "Cachorro", raca));
-                break;
-            case 2:
-                adicionarPet(new Gato(nome, "Gato", raca));
-                break;
-            default:
-                adicionarPet(new Pet(nome, especie, raca));
-                break;
+        if (normEspecie.equals("cachorro")){
+            adicionarPet (new Cachorro(nome, normEspecie, raca));
+        }
+        else if (normEspecie.equals("gato")){
+            adicionarPet(new Gato(nome, normEspecie, raca));
+        }
+        else{
+            adicionarPet(new Pet(nome, normEspecie, raca));
         }
     }
 
@@ -126,7 +114,7 @@ public class Cliente extends Usuario implements Utilidades {
 
     public void marcaBanho(String nomePet){
         String buscaCliente = "SELECT id FROM clientes WHERE email = ?";
-        String buscaPet = "SELECT id FROM pets WHERE user_id = ? AND nome = ?";
+        String buscaPet = "SELECT id, banho FROM pets WHERE user_id = ? AND nome = ?";
         String updateBanho = "UPDATE pets SET banho = 0 WHERE id = ?";
         String insertLista = "INSERT INTO lista_de_espera (pet_id) VALUES (?)";
 
@@ -144,12 +132,19 @@ public class Cliente extends Usuario implements Utilidades {
                     psPet.setInt(1, clienteId);
                     psPet.setString(2, nomePet);
                     try (ResultSet rsPet = psPet.executeQuery()){
+
                         if (rsPet.next()){
+                            // Checando pra saber se esse pet ja tem banho marcado
+                            if(!rsPet.getBoolean("banho")){
+                                System.out.println("\nEsse pet ja tem banho marcado.");
+                                return;
+                            }
+
                             int petId = rsPet.getInt("id");
 
                             psUpdate.setInt(1, petId);
                             psUpdate.executeUpdate();
-                            
+
                             psInsert.setInt(1, petId);
                             psInsert.executeUpdate();
 
@@ -172,7 +167,7 @@ public class Cliente extends Usuario implements Utilidades {
 
     public void marcaTosa(String nomePet){
         String buscaCliente = "SELECT id FROM clientes WHERE email = ?";
-        String buscaPet = "SELECT id FROM pets WHERE user_id = ? AND nome = ?";
+        String buscaPet = "SELECT id, tosa FROM pets WHERE user_id = ? AND nome = ?";
         String updateTosa = "UPDATE pets SET tosa = 0 WHERE id = ?";
         String insertLista = "INSERT INTO lista_de_espera (pet_id) VALUES (?)";
 
@@ -191,6 +186,12 @@ public class Cliente extends Usuario implements Utilidades {
                     psPet.setString(2, nomePet);
                     try (ResultSet rsPet = psPet.executeQuery()){
                         if (rsPet.next()){
+                            // Checando se ja tem tosa marcada
+                            if (!rsPet.getBoolean("tosa")){
+                                System.out.println("\nEsse pet ja tem tosa marcada.");
+                                return;
+                            }
+
                             int petId = rsPet.getInt("id");
 
                             psUpdate.setInt(1, petId);
@@ -261,6 +262,8 @@ public class Cliente extends Usuario implements Utilidades {
 
     @Override
     public String listarMetodos(){
-        return "O cliente pode: adicionar um pet e marcar banho ou tosa, use dos nomes de seu pet para realizar o (s) metodo (s)";
+        return  "- 1 adicionar um pet\n" +
+                "- 2 marcar um banho para o pet\n" +
+                "- 3 marcar uma tosa para o pet";
     }
 }

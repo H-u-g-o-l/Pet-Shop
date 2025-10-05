@@ -10,7 +10,6 @@ public final class Database {
 
     public static Connection getConnection() throws SQLException {
         Connection con = DriverManager.getConnection(url);
-        System.out.println("Connected to: " + new java.io.File("petShop.db").getAbsolutePath());
         return con;
     }
 }

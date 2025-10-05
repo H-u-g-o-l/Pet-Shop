@@ -35,36 +35,14 @@ import java.util.Scanner;
 
 public class Login {
     private final Scanner sc = new Scanner(System.in);
-    public Usuario logar(String nome, String email) {
-        int escolha = -1;
 
-        System.out.println("Selecione 1 caso queira logar como cliente, 2 caso queira logar como funcionario e 3 caso queira logar como gerente");
+    public Cliente logarCliente(){
 
-        while(true){
-            try {
-                while (escolha != 1 && escolha != 2 && escolha != 3){
-                    escolha = sc.nextInt();
-                }
-                break;
-            } catch (InputMismatchException e){
-                System.out.println("Resposta invalida. Tente Novamente.");
-                sc.nextLine();
-            }
-        }
+    System.out.print("Digite o nome do cliente: ");
+    String nome = sc.nextLine().trim();
+    System.out.print("Digite o email do cliente: ");
+    String email = sc.nextLine().trim();
 
-        switch(escolha){
-            case 1:
-                return logarCliente(nome, email);
-            case 2:
-                return logarFuncionario(nome, email);
-            case 3:
-                return logarGerente(nome, email); 
-        }
-    
-        return null;
-    }
-
-    private Cliente logarCliente(String nome, String email){
     String buscaCliente = "SELECT nome FROM clientes WHERE email = ? AND nome = ?";
     
     try (Connection con = Database.getConnection();
@@ -75,6 +53,7 @@ public class Login {
 
         try (ResultSet rs = psBusca.executeQuery()) {
             if (rs.next()) {
+
                 Cliente c = new Cliente();
                 c.setEmail(email);
                 c.setNome(nome);
@@ -83,17 +62,23 @@ public class Login {
 
                 }
             else{
-                System.out.println("Credenciais inválidas para cliente.");
+                System.out.println("\nCredenciais inválidas para cliente.");
                 return null;
             }
             }
         } catch (SQLException e){
-            e.printStackTrace();
+            //e.printStackTrace();
             return null;
         }
     }
 
-    private Funcionario logarFuncionario(String nome, String email){
+    public Funcionario logarFuncionario(){
+    System.out.print("Digite o nome do Funcionario: ");
+    String nome = sc.nextLine();
+    System.out.print("Digite o email do Funcionario: ");
+    String email = sc.nextLine();
+
+
     String buscaFunc = "SELECT nome FROM funcionarios WHERE email = ? AND nome = ? AND ativo = 1";
     
     try (Connection con = Database.getConnection();
@@ -119,7 +104,13 @@ public class Login {
         }
     }
 
-    private Gerente logarGerente(String nome, String email) {
+    public Gerente logarGerente() {
+        System.out.print("Digite o nome do gerente: ");
+        String nome = sc.nextLine();
+        System.out.print("Digite o email do gerente: ");
+        String email = sc.nextLine();
+
+
         String buscaGerente = "SELECT nome FROM funcionarios WHERE email = ? AND nome = ? AND cargo = 'gerente'";
 
         try (Connection con = Database.getConnection();
@@ -145,9 +136,9 @@ public class Login {
 
     // Registra clientes
     public Cliente registrar() {
-        System.out.println("Digite o nome do cliente: ");
+        System.out.print("Digite o nome do cliente: ");
         String nome = sc.nextLine();
-        System.out.println("Digite o email do cliente: ");
+        System.out.print("Digite o email do cliente: ");
         String email = sc.nextLine();
 
         try {
@@ -155,6 +146,7 @@ public class Login {
             return Cliente.criarEPersistir(nome, validEmail);
         } catch (UsuarioError e) {
             System.out.println(e.toString());
+            System.out.println();
             return registrar();
         }
     }

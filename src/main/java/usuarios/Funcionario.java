@@ -68,6 +68,7 @@ public class Funcionario extends usuarios.Usuario implements Utilidades {
                     boolean tosa = rs.getBoolean("tosa");
                 
                     System.out.println(
+                    "----------------------------------------\n" +
                     "Id da entrada: " + idEntrada +
                     "\nDono: " + nomeDono +
                     "\nNome do pet: " + nomePet +
@@ -90,7 +91,7 @@ public class Funcionario extends usuarios.Usuario implements Utilidades {
     public void tosar(int idLista){
         try(Connection con = Database.getConnection();
             PreparedStatement psPet = con.prepareStatement("SELECT pet_id FROM lista_de_espera WHERE id = ?");
-            PreparedStatement psTosa = con.prepareStatement("SELECT tosa FROM pets WHERE id = ?");
+            PreparedStatement psTosa = con.prepareStatement("SELECT nome, tosa FROM pets WHERE id = ?");
             PreparedStatement psUpdateTosa = con.prepareStatement("UPDATE pets SET tosa = 1 WHERE id = ?")){
 
             psPet.setInt(1, idLista);
@@ -102,13 +103,13 @@ public class Funcionario extends usuarios.Usuario implements Utilidades {
                     try (ResultSet rsTosa = psTosa.executeQuery()){
                         if (rsTosa.next()){
                             if (rsTosa.getBoolean("tosa")){
-                                System.out.println("Pet nao precisa de tosa.");
+                                System.out.println("\n"+ rsTosa.getString("nome") + " nao precisa de tosa.");
                                 return;
                             }
 
                             psUpdateTosa.setInt(1, petId);
                             psUpdateTosa.executeUpdate();
-                            System.out.println("Pet " + petId + " foi tosado!");
+                            System.out.println("Pet: " + rsTosa.getString("nome") + " foi tosado!");
                             
                             petPronto(con, petId);
                             adicionaPedidoConcluido(con, petId, false, true);
@@ -127,7 +128,7 @@ public class Funcionario extends usuarios.Usuario implements Utilidades {
 
         try(Connection con = Database.getConnection();
             PreparedStatement psPet = con.prepareStatement("SELECT pet_id FROM lista_de_espera WHERE id = ?");
-            PreparedStatement psBanho = con.prepareStatement("SELECT banho FROM pets WHERE id = ?");
+            PreparedStatement psBanho = con.prepareStatement("SELECT nome, banho FROM pets WHERE id = ?");
             PreparedStatement psUpdateBanho = con.prepareStatement("UPDATE pets SET banho = 1 WHERE id = ?")){
 
             psPet.setInt(1, idLista);
@@ -147,7 +148,7 @@ public class Funcionario extends usuarios.Usuario implements Utilidades {
                               
                             psUpdateBanho.setInt(1, petId);
                             psUpdateBanho.executeUpdate();
-                            System.out.println("Pet " + petId + " tomou banho!");
+                            System.out.println("Pet: " + rsBanho.getString("nome") + " tomou banho!");
 
                             petPronto(con, petId);
                             adicionaPedidoConcluido(con, petId, true, false);
@@ -222,9 +223,9 @@ public class Funcionario extends usuarios.Usuario implements Utilidades {
 
     @Override
     public String listarMetodos(){
-        return "O funcionario pode: Checar pets em espera, pets que precisam de tosa ou banho\n" +
-                "Tosar e dar banho em um pet, dependendo de sua necessidade que pode ser vista pela funcao anterior.\n" +
-                "Perceba que eh importante visualizar o id do pet na lista de espera para realizar esses metodos (tosar e dar banho).\n";
+        return  "- 1 Checar pets em espera, pets que precisam de tosa ou banho\n" +
+                "- 2 Tosar um pet\n" +
+                "- 3 Dar banho em um pet";
     }
 
 }

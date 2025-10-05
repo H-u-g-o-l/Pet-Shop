@@ -23,13 +23,18 @@ import java.util.regex.Pattern;
  */
 
 
-public class Usuario {
+public abstract class Usuario {
     private String nome;
     private String email;
 
     // Padrao pra checar nome e email com regex
     private static final Pattern NAME_PATTERN = Pattern.compile("^[A-Za-zÀ-ÿ'\\-\\s]{2,}$");
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
+
+    public Usuario(){
+        this.nome = null;
+        this.email = null;
+    }
 
     public Usuario(String nome, String email) {
         setEmail(email);
@@ -54,7 +59,6 @@ public class Usuario {
     }
 
     public static String checaEmail(String email) throws UsuarioError {
-        String emailAtualizado = email.trim();
         if (!EMAIL_PATTERN.matcher(email).matches()){
             throw new UsuarioError(1);
         }
@@ -62,26 +66,24 @@ public class Usuario {
         String query = "SELECT COUNT(*) FROM clientes WHERE email = ?";
         try (Connection con = Database.getConnection();
              PreparedStatement stmt = con.prepareStatement(query)) {
-            stmt.setString(1, emailAtualizado);
+            stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
             if (rs.next() && rs.getInt(1) > 0) {
                 throw new UsuarioError(2);
             }
         } catch (SQLException err) {
-            System.err.println("Erro ao verificar email: " + err.getMessage());
-            err.printStackTrace();
+            System.out.println("Erro ao verificar email: " + err.getMessage());
+//            err.printStackTrace();
         }
 
-        return emailAtualizado;
+        return email;
     }
 
     public static String checaNome(String nome) {
-        String nomeAtualizado = nome.trim();
-
-        if (!NAME_PATTERN.matcher(nomeAtualizado).matches()){
+        if (!NAME_PATTERN.matcher(nome).matches()){
             return null;
         }
 
-        return nomeAtualizado.toLowerCase();
+        return nome.toLowerCase();
     }
 }
