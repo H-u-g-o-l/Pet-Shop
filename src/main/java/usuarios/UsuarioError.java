@@ -9,15 +9,10 @@ public class UsuarioError extends Exception {
 
     @Override
     public String toString() {
-        String msg = "";
-        switch (kind) {
-            case 1:
-                msg = "Email inválido";
-                break;
-            case 2:
-                msg = "Email já cadastrado! Tentou outro";
-        }
-
-        return msg;
+        return switch (kind) {
+            case 1 -> "Email inválido";
+            case 2 -> "Email já cadastrado! Tentou outro";
+            default -> "";
+        };
     }
 }

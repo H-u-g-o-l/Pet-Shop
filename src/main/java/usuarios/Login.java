@@ -1,9 +1,5 @@
 package usuarios;
 
-import usuarios.Usuario;
-import usuarios.Cliente;
-import usuarios.Gerente;
-
 import main.Database;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,8 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
-
-
 
 /*  Classe Login que lida com o login e registro de usuarios
  *  Criada com o intuito que na main alguem inicialize um usuário e use dessa função para puxar os dados do banco de dados
@@ -35,57 +29,49 @@ import java.util.Scanner;
 
 public class Login {
     private final Scanner sc = new Scanner(System.in);
-    public Usuario logar(String nome, String email) {
+
+    public Usuario logar() {
         int escolha = -1;
 
         System.out.println("Selecione 1 caso queira logar como cliente, 2 caso queira logar como funcionario e 3 caso queira logar como gerente");
 
-        while(true){
+        while(true) {
             try {
                 while (escolha != 1 && escolha != 2 && escolha != 3){
                     escolha = sc.nextInt();
                 }
+
                 break;
-            } catch (InputMismatchException e){
+            } catch (InputMismatchException e) {
                 System.out.println("Resposta invalida. Tente Novamente.");
                 sc.nextLine();
             }
         }
 
-        switch(escolha){
-            case 1:
-                return logarCliente(nome, email);
-            case 2:
-                return logarFuncionario(nome, email);
-            case 3:
-                return logarGerente(nome, email); 
-        }
-    
-        return null;
+        return tryCreateUser(escolha);
     }
 
-    private Cliente logarCliente(String nome, String email){
-    String buscaCliente = "SELECT nome FROM clientes WHERE email = ? AND nome = ?";
+    private Cliente logarCliente(String nome, String email) {
+        String buscaCliente = "SELECT nome FROM clientes WHERE email = ? AND nome = ?";
     
-    try (Connection con = Database.getConnection();
-         PreparedStatement psBusca = con.prepareStatement(buscaCliente)){
-            
-        psBusca.setString(1, email);
-        psBusca.setString(2, nome);
+        try (Connection con = Database.getConnection();
+             PreparedStatement psBusca = con.prepareStatement(buscaCliente)) {
 
-        try (ResultSet rs = psBusca.executeQuery()) {
-            if (rs.next()) {
-                Cliente c = new Cliente();
-                c.setEmail(email);
-                c.setNome(nome);
-                    
-                return c;
+            psBusca.setString(1, email);
+            psBusca.setString(2, nome);
 
+            try (ResultSet rs = psBusca.executeQuery()) {
+                if (rs.next()) {
+                    Cliente c = new Cliente();
+                    c.setEmail(email);
+                    c.setNome(nome);
+
+                    return c;
                 }
-            else{
-                System.out.println("Credenciais inválidas para cliente.");
-                return null;
-            }
+                else {
+                    System.out.println("Credenciais inválidas para cliente.");
+                    return null;
+                }
             }
         } catch (SQLException e){
             e.printStackTrace();
@@ -93,22 +79,21 @@ public class Login {
         }
     }
 
-    private Funcionario logarFuncionario(String nome, String email){
-    String buscaFunc = "SELECT nome FROM funcionarios WHERE email = ? AND nome = ? AND ativo = 1";
-    
-    try (Connection con = Database.getConnection();
-        PreparedStatement psBusca = con.prepareStatement(buscaFunc)){
-            
-        psBusca.setString(1, email);
-        psBusca.setString(2, nome);
+    private Funcionario logarFuncionario(String nome, String email) {
+        String buscaFunc = "SELECT nome FROM funcionarios WHERE email = ? AND nome = ? AND ativo = 1";
 
-        try (ResultSet rs = psBusca.executeQuery()) {
-            if (rs.next()) {
-                Funcionario f = new Funcionario(nome, email);
-                return f;
+        try (Connection con = Database.getConnection();
+            PreparedStatement psBusca = con.prepareStatement(buscaFunc)) {
 
+            psBusca.setString(1, email);
+            psBusca.setString(2, nome);
+
+            try (ResultSet rs = psBusca.executeQuery()) {
+                if (rs.next()) {
+                    Funcionario f = new Funcionario(nome, email);
+                    return f;
                 }
-                else{
+                else {
                     System.out.println("Credenciais invalidas para funcionario.");
                     return null;
                 }
@@ -157,5 +142,30 @@ public class Login {
             System.out.println(e.toString());
             return registrar();
         }
+    }
+
+    private String askValue(String value) {
+        System.out.printf("Digite o %s do usuário: ",  value);
+        return sc.nextLine();
+    }
+
+    private Usuario tryCreateUser(int escolha) {
+        sc.nextLine();
+        String email = askValue("email");
+        String nome = askValue("nome");
+
+        Usuario user = switch (escolha) {
+            case 1 -> logarCliente(nome, email);
+            case 2 -> logarFuncionario(nome, email);
+            case 3 -> logarGerente(nome, email);
+            default -> null;
+        };
+
+        if (user == null) {
+            System.out.println("Dados inválidos, tente novamente");
+            tryCreateUser(escolha);
+        }
+
+        return user;
     }
 }

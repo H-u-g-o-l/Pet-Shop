@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
  *  checaNome e checaEmail são chamados pelos setters
  */
 
-
 public class Usuario {
     private String nome;
     private String email;
@@ -41,7 +40,7 @@ public class Usuario {
     }
 
     // Checa se o nome é um nome mesmo e normaliza ele
-    public void setNome(String nome){
+    public void setNome(String nome) {
         this.nome = checaNome(nome);
     }
     
