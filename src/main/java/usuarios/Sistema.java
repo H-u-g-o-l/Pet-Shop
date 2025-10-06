@@ -35,7 +35,7 @@ public class Sistema {
         System.out.println("-----------------------------------------");
         System.out.println("Voce pode: ");
         System.out.println(cliente.listarMetodos());
-        System.out.println("- 4 Deslogar");
+        System.out.println("- 4 Deslogar\n");
 
         int acao =  obterRespostaPlus(0);
         // limpa buffer
@@ -86,21 +86,59 @@ public class Sistema {
         // Ver pets em espera
         if (acao == 1) {
             System.out.print("Insira quantos pets voce quer ver: ");
-            int quant = sc.nextInt();
+            int quant = -1;
+
+            while(true){
+                try{
+                    quant = sc.nextInt();
+
+                    if (quant <= 0 || quant > 20){
+                        System.out.println("\nResposta invalida");
+                        continue;
+                    }
+                    break;
+                } catch (InputMismatchException e){
+                    System.out.println("\nResposta invalida");
+                    sc.nextLine();
+                    System.out.print("Insira quantos pets voce quer ver: ");
+                }
+            }
 
             funcionario.checaPetsEmEspera(quant);
         }
         // Tosa pet
         else if (acao == 2){
             System.out.print("Insira o id da lista de pedidos em espera do pet para tosar: ");
-            int id = sc.nextInt();
+            int id = -1;
+
+            while(true){
+                try{
+                    id = sc.nextInt();
+                    break;
+                } catch (InputMismatchException e){
+                    System.out.println("\nResposta invalida");
+                    sc.nextLine();
+                    System.out.print("Insira o id da lista de pedidos em espera do pet para tosar: ");
+                }
+            }
 
             funcionario.tosar(id);
         }
         // Da banho em pet
         else if (acao == 3){
             System.out.print("Insira o id da lista de pedidos em espera do pet para dar banho: ");
-            int id = sc.nextInt();
+            int id = -1;
+
+            while(true){
+                try{
+                    id = sc.nextInt();
+                    break;
+                } catch (InputMismatchException e){
+                    System.out.println("\nResposta invalida");
+                    sc.nextLine();
+                    System.out.print("Insira o id da lista de pedidos em espera do pet para dar banho: ");
+                }
+            }
 
             funcionario.darBanho(id);
         }
@@ -114,7 +152,7 @@ public class Sistema {
         System.out.println("-----------------------------------------");
         System.out.println("Voce pode: ");
         System.out.println(gerente.listarMetodos());
-        System.out.println("- 7 Deslogar\n");
+        System.out.println("- 8 Deslogar\n");
 
         int acao =  obterRespostaPlusPlus(0);
         sc.nextLine();
@@ -123,28 +161,35 @@ public class Sistema {
             System.out.print("Insira quantos funcionarios voce quer ver: ");
             int quant = sc.nextInt();
 
-            gerente.listarClientes(quant);
+            gerente.listarFuncionariosAtivos(quant);
         }
 
         else if (acao == 2){
-            System.out.println("Quantia de Funcionarios ativos: " + gerente.contarFuncionariosAtivos());
+            System.out.print("Insira quantos clientes voce quer ver: ");
+            int quant = sc.nextInt();
+
+            gerente.listarClientes(quant);
         }
 
         else if (acao == 3){
-            System.out.println("Quantia de Clientes Registrados: " + gerente.contarClientes());
+            System.out.println("Quantia de Funcionarios ativos: " + gerente.contarFuncionariosAtivos());
         }
 
         else if (acao == 4){
-            System.out.println("Quantia de pedidos Concluidos: " + gerente.contarPedidosConcluidos());
+            System.out.println("Quantia de Clientes Registrados: " + gerente.contarClientes());
         }
 
         else if (acao == 5){
+            System.out.println("Quantia de pedidos Concluidos: " + gerente.contarPedidosConcluidos());
+        }
+        else if (acao == 6){
             System.out.print("Escreva o email do funcionario para demitir: ");
             String email = sc.nextLine();
 
             gerente.demitirFuncionario(email);
         }
-        else if (acao == 6){
+
+        else if (acao == 7){
             System.out.print("Escreva o nome do funcionario para contratar: ");
             String nome = sc.nextLine();
 
@@ -153,8 +198,7 @@ public class Sistema {
 
             gerente.contratarFuncionario(nome, email);
         }
-
-        if (acao != 7){
+        if (acao != 8){
             opcoesGerente(gerente);
         }
     }
@@ -195,12 +239,12 @@ public class Sistema {
         return resposta;
     }
     public int obterRespostaPlusPlus(int resposta) {
-        while (resposta < 1 || resposta > 7) {
+        while (resposta < 1 || resposta > 8) {
             try {
                 System.out.print("Sua resposta: ");
                 resposta = sc.nextInt();
 
-                if (resposta > 7 || resposta < 1){
+                if (resposta > 8 || resposta < 1){
                     System.out.println("\nResposta invalida. Tente novamente.");
                 }
             } catch (InputMismatchException e) {

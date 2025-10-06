@@ -79,7 +79,7 @@ public class Login {
     String email = sc.nextLine();
 
 
-    String buscaFunc = "SELECT nome FROM funcionarios WHERE email = ? AND nome = ? AND ativo = 1 AND cargo = 'funcionario'";
+    String buscaFunc = "SELECT nome FROM funcionarios WHERE email = ? AND nome = ? AND cargo = 'funcionario'";
     
     try (Connection con = Database.getConnection();
         PreparedStatement psBusca = con.prepareStatement(buscaFunc)){

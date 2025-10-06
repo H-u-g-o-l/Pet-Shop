@@ -80,7 +80,7 @@ public class Gerente extends Usuario implements Utilidades{
             return;
         }
 
-        String listaFuncionarios = "SELECT nome, email FROM funcionarios WHERE ativo = 1 ORDER BY id LIMIT ?";
+        String listaFuncionarios = "SELECT nome, email, cargo FROM funcionarios ORDER BY id LIMIT ?";
 
         try (Connection con = Database.getConnection();
             PreparedStatement ps = con.prepareStatement(listaFuncionarios)){
@@ -95,8 +95,9 @@ public class Gerente extends Usuario implements Utilidades{
                     algum = true;
                     String nome = rs.getString("nome");
                     String email = rs.getString("email");
+                    String cargo = rs.getString("cargo");
 
-                    System.out.println("Nome: " + nome + " Email: " + email);
+                    System.out.println("Nome: " + nome + " Email: " + email +  " Cargo: " + cargo);
                 }
 
                 if (!algum){
@@ -111,7 +112,7 @@ public class Gerente extends Usuario implements Utilidades{
 
     // Ver quantos funcionarios tem trabalhando
     public int contarFuncionariosAtivos(){
-        String contaFuncAtivos = "SELECT COUNT(*) FROM funcionarios WHERE ativo = 1";
+        String contaFuncAtivos = "SELECT COUNT(*) FROM funcionarios";
 
         try (Connection con = Database.getConnection();
             PreparedStatement ps = con.prepareStatement(contaFuncAtivos);
@@ -203,7 +204,7 @@ public class Gerente extends Usuario implements Utilidades{
     
     // Demitir funcionario
     public void demitirFuncionario(String email){
-        String demitir = "UPDATE funcionarios SET ativo = 0, demitido_em = CURRENT_TIMESTAMP where email = ?";
+        String demitir = "DELETE FROM funcionarios WHERE email = ?";
 
         try (Connection con = Database.getConnection();
             PreparedStatement psDem = con.prepareStatement(demitir)){
@@ -211,8 +212,12 @@ public class Gerente extends Usuario implements Utilidades{
             psDem.setString(1, email);
             if (psDem.executeUpdate() == 0){
                 System.out.println("\nFuncionario nao encontrado.");
+
             }
-            System.out.println("\nFuncionario com o email: " + email + " foi demitido.");
+            else{
+                System.out.println("\nFuncionario com o email: " + email + " foi demitido.");
+            }
+
         } catch (SQLException e){
             System.err.println("Erro ao demitir funcionario com email: " + email + " " + e.getMessage());
             e.printStackTrace();
@@ -230,7 +235,6 @@ public class Gerente extends Usuario implements Utilidades{
         }
 
         String contratar = "INSERT INTO funcionarios (nome, email) VALUES (?, ?)";
-        
         try (Connection con = Database.getConnection();
             PreparedStatement psCont = con.prepareStatement(contratar)){
             
@@ -240,14 +244,14 @@ public class Gerente extends Usuario implements Utilidades{
             psCont.executeUpdate();
             System.out.println("\nFuncionario com nome: " + nome + " e email: " + email + " foi contratado!");
         } catch (SQLException e){
-            String erro = e.getMessage();
+            String erro = e.getMessage().toLowerCase();
 
             if (erro.contains("unique") || erro.contains("uniqueness")){
                 System.out.println("\nUm funcionario com esse email ja foi inserido");
             }
-
-            System.err.println("Erro ao contratar: " + nome + " com email: " + email + " " + e.getMessage());
-            e.printStackTrace();
+            else{
+                System.out.println("Erro ao contratar: " + nome + " com email: " + email);
+            }
         }
     }
 
@@ -259,11 +263,12 @@ public class Gerente extends Usuario implements Utilidades{
 
     @Override
     public String listarMetodos(){
-        return  "- 1 Listar os funcionarios que estao na ativa\n" +
-                "- 2 Contar funcionarios ativos \n" +
-                "- 3 Contar os clientes registrados  \n" +
-                "- 4 Contar Pedidos concluidos\n" +
-                "- 5 Demitir funcionario \n" +
-                "- 6 Contratar um funcionario.";
+        return  "- 1 Listar funcionarios\n" +
+                "- 2 Listar clientes\n" +
+                "- 3 Contar funcionarios\n" +
+                "- 4 Contar os clientes registrados  \n" +
+                "- 5 Contar Pedidos concluidos\n" +
+                "- 6 Demitir funcionario \n" +
+                "- 7 Contratar um funcionario.";
     }
 }

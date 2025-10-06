@@ -66,21 +66,20 @@ public class Funcionario extends usuarios.Usuario implements Utilidades {
                     String racaPet = rs.getString("raca_pet");
                     boolean banho = rs.getBoolean("banho");
                     boolean tosa = rs.getBoolean("tosa");
-                
+
                     System.out.println(
-                    "----------------------------------------\n" +
-                    "Id da entrada: " + idEntrada +
-                    "\nDono: " + nomeDono +
-                    "\nNome do pet: " + nomePet +
-                    "\nRaca: " + racaPet + 
-                    "\nEsta limpo: " + banho +
-                    "\nEsta tosado: " + tosa +
-                    "\nPedido recebido: " + rs.getDate("pedido_feito")
+                            "----------------------------------------\n" +
+                                    "Id da entrada: " + idEntrada +
+                                    "\nDono: " + nomeDono +
+                                    "\nNome do pet: " + nomePet +
+                                    "\nRaca: " + racaPet +
+                                    "\nEsta limpo: " + banho +
+                                    "\nEsta tosado: " + tosa +
+                                    "\nPedido recebido: " + rs.getDate("pedido_feito")
                     );
                 }
+                System.out.println("\n Sem mais pets em espera!\n");
             }
-            
-
         } catch (SQLException e){
             System.err.println("Erro ao listar pets em espera: " + e.getMessage());
             e.printStackTrace();
@@ -184,7 +183,7 @@ public class Funcionario extends usuarios.Usuario implements Utilidades {
                     if (banho && tosa){
                         psDeletaPet.setInt(1, idPet);
                         psDeletaPet.executeUpdate();
-                        System.out.println("Pet com id = "+ idPet + " foi removido da lista de espera.");
+                        System.out.println("\nPet com id = "+ idPet + " foi removido da lista de espera.");
 
                         return true;
                     }

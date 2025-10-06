@@ -86,15 +86,27 @@ public class Cliente extends Usuario implements Utilidades {
     public void adicionarPet(Pet pet) {
         String inserir = "INSERT INTO pets (user_id, nome, raca, banho, tosa) VALUES (?, ?, ?, ?, ?)";
         String buscaIdDono = "SELECT id FROM clientes WHERE email = ?";
+        String buscaPet = "SELECT * FROM pets WHERE user_id = ? AND nome = ?";
 
         try (Connection con = Database.getConnection();
             PreparedStatement psUpdate = con.prepareStatement(inserir);
-            PreparedStatement psIdDono = con.prepareStatement(buscaIdDono)){
+            PreparedStatement psIdDono = con.prepareStatement(buscaIdDono);
+            PreparedStatement psPet = con.prepareStatement(buscaPet)){
             
             psIdDono.setString(1, this.getEmail());
             try (ResultSet rsId = psIdDono.executeQuery()){
                 if (rsId.next()){
                     int donoId = rsId.getInt("id");
+
+                    psPet.setInt(1, donoId);
+                    psPet.setString(2, pet.getNomePet());
+
+                    try (ResultSet rsPet = psPet.executeQuery()){
+                        if (rsPet.next()){
+                            System.out.println("Pet ja cadastrado.");
+                            return;
+                        }
+                    }
 
                     psUpdate.setInt(1, donoId);
                     psUpdate.setString(2, pet.getNomePet());
@@ -104,7 +116,7 @@ public class Cliente extends Usuario implements Utilidades {
 
                     psUpdate.executeUpdate();
 
-                    System.out.println("\nPet adicionado com sucesso!");
+                    System.out.println("Pet adicionado com sucesso!");
                 }
             }
         } catch(Exception e){
