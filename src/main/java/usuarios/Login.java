@@ -79,7 +79,7 @@ public class Login {
     String email = sc.nextLine();
 
 
-    String buscaFunc = "SELECT nome FROM funcionarios WHERE email = ? AND nome = ? AND ativo = 1";
+    String buscaFunc = "SELECT nome FROM funcionarios WHERE email = ? AND nome = ? AND ativo = 1 AND cargo = 'funcionario'";
     
     try (Connection con = Database.getConnection();
         PreparedStatement psBusca = con.prepareStatement(buscaFunc)){
@@ -94,7 +94,7 @@ public class Login {
 
                 }
                 else{
-                    System.out.println("Credenciais invalidas para funcionario.");
+                    System.out.println("\nCredenciais invalidas para funcionario.");
                     return null;
                 }
             }
@@ -124,7 +124,7 @@ public class Login {
                     return new Gerente(nome, email);
                 }
                 else {
-                    System.out.println("Credenciais invalidas para gerente.");
+                    System.out.println("\nCredenciais invalidas para gerente.");
                     return null;
                 }
             }

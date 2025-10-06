@@ -46,6 +46,7 @@ public class Cliente extends Usuario implements Utilidades {
     // Adiciona o cliente ao db caso o email seja unico
     public static Cliente criarEPersistir(String nome, String email) {
         if (Usuario.checaNome(nome) == null){
+            System.out.println("\nNome invalido.");
             return null;
         }
 
@@ -58,7 +59,7 @@ public class Cliente extends Usuario implements Utilidades {
             ps.setString(2, email);
             ps.executeUpdate();
 
-            System.out.println("Cliente criado com sucesso.");
+            System.out.println("\nCliente criado com sucesso.");
 
             return new Cliente(nome, email, true);
         } catch (SQLException e){
@@ -103,7 +104,7 @@ public class Cliente extends Usuario implements Utilidades {
 
                     psUpdate.executeUpdate();
 
-                    System.out.println("Pet adicionado com sucesso!");
+                    System.out.println("\nPet adicionado com sucesso!");
                 }
             }
         } catch(Exception e){
@@ -148,15 +149,15 @@ public class Cliente extends Usuario implements Utilidades {
                             psInsert.setInt(1, petId);
                             psInsert.executeUpdate();
 
-                            System.out.println("Banho marcado para o pet " + nomePet);
+                            System.out.println("\nBanho marcado para o pet " + nomePet);
                         }
                         else{
-                            System.out.println("Nao foi encontrado pet associado ao cliente. Tente 'adicionarPet' primeiro");
+                            System.out.println("\nNao foi encontrado pet associado ao cliente. Tente 'adicionarPet' primeiro");
                         }
                     }
                 }
                 else{
-                    System.out.println("Cliente nao encontrado");
+                    System.out.println("\nCliente nao encontrado");
                 }
             }    
         } catch (SQLException e){
@@ -200,15 +201,15 @@ public class Cliente extends Usuario implements Utilidades {
                             psInsert.setInt(1, petId);
                             psInsert.executeUpdate();
 
-                            System.out.println("Tosa marcado para o pet " + nomePet);
+                            System.out.println("\nTosa marcado para o pet " + nomePet);
                         }
                         else{
-                            System.out.println("Nao foi encontrado pet associado ao cliente. Tente 'adicionarPet' primeiro");
+                            System.out.println("\nNao foi encontrado pet associado ao cliente. Tente 'adicionarPet' primeiro");
                         }
                     }
                 }
                 else{
-                    System.out.println("Cliente nao encontrado");
+                    System.out.println("\nCliente nao encontrado");
                 }
             }    
         } catch (SQLException e){

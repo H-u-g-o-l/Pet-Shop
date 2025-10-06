@@ -63,7 +63,7 @@ public class Sistema {
         }
         // Marca tosa
         else if (acao == 3){
-            System.out.print("Insira o nome do pet que voce deseja marcar a tosa");
+            System.out.print("Insira o nome do pet que voce deseja marcar a tosa: ");
             String nome = sc.nextLine().toLowerCase();
 
             cliente.marcaTosa(nome);
@@ -166,10 +166,10 @@ public class Sistema {
                 resposta = sc.nextInt();
 
                 if (resposta > 3 || resposta < 1){
-                    System.out.println("Resposta invalida. Tente novamente.");
+                    System.out.println("\nResposta invalida. Tente novamente.");
                 }
             } catch (InputMismatchException e) {
-                System.out.println("Resposta invalida. Tente novamente.");
+                System.out.println("\nResposta invalida. Tente novamente.");
                 sc.nextLine();
                 resposta = 0;
             }
@@ -184,10 +184,10 @@ public class Sistema {
                 resposta = sc.nextInt();
 
                 if (resposta > 4 || resposta < 1){
-                    System.out.println("Resposta invalida. Tente novamente.");
+                    System.out.println("\nResposta invalida. Tente novamente.");
                 }
             } catch (InputMismatchException e) {
-                System.out.println("Resposta invalida. Tente novamente.");
+                System.out.println("\nResposta invalida. Tente novamente.");
                 sc.nextLine();
                 resposta = 0;
             }
@@ -201,10 +201,10 @@ public class Sistema {
                 resposta = sc.nextInt();
 
                 if (resposta > 7 || resposta < 1){
-                    System.out.println("Resposta invalida. Tente novamente.");
+                    System.out.println("\nResposta invalida. Tente novamente.");
                 }
             } catch (InputMismatchException e) {
-                System.out.println("Resposta invalida. Tente novamente.");
+                System.out.println("\nResposta invalida. Tente novamente.");
                 sc.nextLine();
                 resposta = 0;
             }

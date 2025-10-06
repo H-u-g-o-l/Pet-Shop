@@ -116,7 +116,11 @@ public class Funcionario extends usuarios.Usuario implements Utilidades {
                         }
                     }
                 }
+                else{
+                    System.out.println("\nEntrada da lista nao encontrada, id: " + idLista);
+                }
             }
+
         } catch (SQLException e){
             System.err.println("Erro ao tosar pet: " + e.getMessage());
             e.printStackTrace();
@@ -156,7 +160,7 @@ public class Funcionario extends usuarios.Usuario implements Utilidades {
                     }
                 }
                 else{
-                    System.out.println("Entrada da lista nao encontrada, id: " + idLista);
+                    System.out.println("\nEntrada da lista nao encontrada, id: " + idLista);
                 }
             }
         } catch (SQLException e){

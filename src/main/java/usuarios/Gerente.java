@@ -100,7 +100,7 @@ public class Gerente extends Usuario implements Utilidades{
                 }
 
                 if (!algum){
-                    System.out.println("Nenhum funcionario ativo foi encontrado.");
+                    System.out.println("\nNenhum funcionario ativo foi encontrado.");
                 }
             }
         } catch (SQLException e){
@@ -131,7 +131,7 @@ public class Gerente extends Usuario implements Utilidades{
     // Listar clientes
     public void listarClientes(int lim){
         if (lim <= 0){
-            System.out.println("Quantidade para listar errada, tente novamente");
+            System.out.println("\nQuantidade para listar errada, tente novamente");
             return;
         }
 
@@ -154,7 +154,7 @@ public class Gerente extends Usuario implements Utilidades{
                 }
 
                 if (!algum){
-                    System.out.println("Nenhum cliente foi encontrado.");
+                    System.out.println("\nNenhum cliente foi encontrado.");
                 }
             }
         } catch (SQLException e){
@@ -210,9 +210,9 @@ public class Gerente extends Usuario implements Utilidades{
             
             psDem.setString(1, email);
             if (psDem.executeUpdate() == 0){
-                System.out.println("Funcionario nao encontrado.");
+                System.out.println("\nFuncionario nao encontrado.");
             }
-            System.out.println("Funcionario com o email: " + email + " foi demitido.");
+            System.out.println("\nFuncionario com o email: " + email + " foi demitido.");
         } catch (SQLException e){
             System.err.println("Erro ao demitir funcionario com email: " + email + " " + e.getMessage());
             e.printStackTrace();
@@ -238,12 +238,12 @@ public class Gerente extends Usuario implements Utilidades{
             psCont.setString(2, email);
 
             psCont.executeUpdate();
-            System.out.println("Funcionario com nome: " + nome + " e email: " + email + " foi contratado!");
+            System.out.println("\nFuncionario com nome: " + nome + " e email: " + email + " foi contratado!");
         } catch (SQLException e){
             String erro = e.getMessage();
 
             if (erro.contains("unique") || erro.contains("uniqueness")){
-                System.out.println("Um funcionario com esse email ja foi inserido");
+                System.out.println("\nUm funcionario com esse email ja foi inserido");
             }
 
             System.err.println("Erro ao contratar: " + nome + " com email: " + email + " " + e.getMessage());

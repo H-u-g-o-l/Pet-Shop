@@ -12,7 +12,7 @@ public class UsuarioError extends Exception {
         String msg = "";
         switch (kind) {
             case 1:
-                msg = "Email invalido";
+                msg = "\nEmail invalido";
                 break;
             case 2:
                 msg = "\nEmail ja cadastrado! Tente outro";

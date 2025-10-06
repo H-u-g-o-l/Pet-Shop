@@ -72,8 +72,8 @@ public abstract class Usuario {
                 throw new UsuarioError(2);
             }
         } catch (SQLException err) {
-            System.out.println("Erro ao verificar email: " + err.getMessage());
-//            err.printStackTrace();
+            System.out.println("\nErro ao verificar email: " + err.getMessage());
+            err.printStackTrace();
         }
 
         return email;
